@@ -85,9 +85,23 @@ jobs:
       - name: Tests
         run: .venv/bin/python -m pytest
 
+      - name: Export the OpenAPI schema
+        run: .venv/bin/python -m app.cli.export_openapi openapi.json
+
+      - name: Upload the schema for the frontend job
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-schema
+          path: backend/openapi.json
+          retention-days: 1
+
   frontend:
     name: Frontend — lint, types, build
     runs-on: ubuntu-latest
+    # ينتظر الباك اند ليأخذ منه المواصفة: أنواع الواجهة تُولَّد من العقد
+    # نفسه، فيصبح تغيير حقل في المخطط كسرًا فوريًا لبناء الواجهة بدل خطأ
+    # يظهر وقت التشغيل عند مستخدم.
+    needs: backend
     defaults:
       run:
         working-directory: frontend
@@ -101,8 +115,17 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      - name: Download the OpenAPI schema
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-schema
+          path: backend
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate the API types from the schema
+        run: npm run gen:api
 
       - name: Lint (eslint)
         run: npm run lint

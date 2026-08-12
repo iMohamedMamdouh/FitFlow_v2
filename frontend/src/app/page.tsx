@@ -3,6 +3,7 @@ const PHASES = [
   { id: "1", title: "قاعدة البيانات والمصادقة", detail: "Auth + RBAC + Audit Log", done: true },
   { id: "2", title: "نموذج البيانات الكامل", detail: "الجداول والقيود وآلة الحالات", done: true },
   { id: "4", title: "محرك القواعد", detail: "المنطق العلمي + Golden Tests", done: true },
+  { id: "5", title: "واجهات API ودورة الاعتماد", detail: "توليد الخطط + العزل", done: true },
 ];
 
 export default function HomePage() {

@@ -33,6 +33,18 @@ class AuditAction(enum.StrEnum):
     TOKEN_REFRESHED = "auth.token_refreshed"
     TOKEN_REUSE_DETECTED = "auth.token_reuse_detected"
 
+    PROFILE_UPDATED = "profile.updated"
+    CONSENT_ACCEPTED = "profile.consent_accepted"
+    INJURY_RECORDED = "injury.recorded"
+
+    PLAN_GENERATED = "plan.generated"
+    PLAN_SUBMITTED_FOR_REVIEW = "plan.submitted_for_review"
+    PLAN_APPROVED = "plan.approved"
+    PLAN_CHANGES_REQUESTED = "plan.changes_requested"
+    PLAN_ACTIVATED = "plan.activated"
+    PLAN_ARCHIVED = "plan.archived"
+    PATIENT_RECORD_VIEWED = "patient.record_viewed"
+
 
 class AuditLog(Base, UUIDPrimaryKeyMixin):
     __tablename__ = "audit_logs"

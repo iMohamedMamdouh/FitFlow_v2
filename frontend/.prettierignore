@@ -4,3 +4,6 @@ out
 public
 next-env.d.ts
 package-lock.json
+
+# أنواع مولَّدة من مواصفة OpenAPI — لا تُنسَّق ولا تُعدَّل يدويًا
+src/lib/api/generated.ts
