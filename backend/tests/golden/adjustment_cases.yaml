@@ -1,0 +1,69 @@
+# حالات مرجعية للتعديل التلقائي
+#
+# الاتجاهان مقصودان: كشف الثبات وحده يدفع دائمًا نحو الخفض فينتج انحدارًا
+# لا يتوقف. الفقد الأسرع من الآمن يستدعي رفع السعرات لا مكافأتها.
+
+cases:
+  - name: "فقد ضمن المعدل الآمن — لا تعديل"
+    gender: male
+    weight_kg: 90
+    current_calories: 2400
+    readings: [[0, 90.0], [14, 89.2]]
+    expected_kind: none
+    expected_calories: 2400
+
+  - name: "ثبات تام — يُخفَّض 100 سعرة"
+    gender: male
+    weight_kg: 90
+    current_calories: 2400
+    readings: [[0, 90.0], [14, 90.0]]
+    expected_kind: plateau
+    expected_calories: 2300
+
+  - name: "فقد أقل من العتبة يُعتبر ثباتًا"
+    gender: female
+    weight_kg: 78
+    current_calories: 1600
+    readings: [[0, 78.0], [14, 77.8]]
+    expected_kind: plateau
+    expected_calories: 1500
+
+  - name: "زيادة وزن في خطة إنقاص"
+    gender: female
+    weight_kg: 78
+    current_calories: 1700
+    readings: [[0, 77.5], [14, 78.2]]
+    expected_kind: plateau
+    expected_calories: 1600
+
+  - name: "فقد مفرط — تُرفع السعرات"
+    gender: male
+    weight_kg: 90
+    current_calories: 2000
+    readings: [[0, 92.0], [14, 88.0]]
+    expected_kind: losing_too_fast
+    expected_calories: 2100
+
+  - name: "فقد مفرط لدى امرأة"
+    gender: female
+    weight_kg: 70
+    current_calories: 1400
+    readings: [[0, 72.0], [14, 69.4]]
+    expected_kind: losing_too_fast
+    expected_calories: 1500
+
+  - name: "ثبات عند الأرضية — يُرفض الخفض"
+    gender: female
+    weight_kg: 60
+    current_calories: 1250
+    readings: [[0, 60.0], [14, 60.0]]
+    expected_kind: floor_reached
+    expected_calories: 1250
+
+  - name: "ثبات عند أرضية الرجال"
+    gender: male
+    weight_kg: 70
+    current_calories: 1550
+    readings: [[0, 70.0], [14, 70.1]]
+    expected_kind: floor_reached
+    expected_calories: 1550

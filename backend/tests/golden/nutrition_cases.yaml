@@ -1,0 +1,426 @@
+# حالات مرجعية لمحرك القواعد — Golden Tests
+#
+# محسوبة من معادلة Mifflin-St Jeor مباشرة بسكربت مستقل عن كود المحرك،
+# لا بتشغيل المحرك وتسجيل ناتجه. الحالة الأخيرة تجعل الاختبار يوثّق
+# السلوك الحالي مهما كان؛ الحساب المستقل هو ما يجعله يكشف الخطأ.
+#
+# أي تعديل على هذه القيم يحتاج مراجعة أخصائي تغذية معتمد (ADR-003).
+
+cases:
+  - name: "رجل متوسط النشاط يريد إنقاص الوزن"
+    input:
+      age_years: 30
+      gender: male
+      height_cm: 180
+      weight_kg: 90
+      activity_level: moderate
+      goal: weight_loss
+    expected:
+      bmi: 27.78
+      bmr: 1880.0
+      tdee: 2914.0
+      daily_calories: 2414
+      protein_g: 162.0
+      carbs_g: 290.6
+      fat_g: 67.1
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة خاملة بسمنة"
+    input:
+      age_years: 45
+      gender: female
+      height_cm: 160
+      weight_kg: 95
+      activity_level: sedentary
+      goal: weight_loss
+    expected:
+      bmi: 37.11
+      bmr: 1564.0
+      tdee: 1876.8
+      daily_calories: 1408
+      protein_g: 120.5
+      carbs_g: 141.1
+      fat_g: 40.2
+      safety_floor_applied: false
+      deficit_capped: true
+
+  - name: "امرأة نحيفة — الأرضية تحمي من التجويع"
+    input:
+      age_years: 25
+      gender: female
+      height_cm: 155
+      weight_kg: 45
+      activity_level: sedentary
+      goal: weight_loss
+    expected:
+      bmi: 18.73
+      bmr: 1132.75
+      tdee: 1359.3
+      daily_calories: 1200
+      protein_g: 81.0
+      carbs_g: 144.0
+      fat_g: 33.3
+      safety_floor_applied: true
+      deficit_capped: true
+
+  - name: "شاب شديد النشاط يبني عضلًا"
+    input:
+      age_years: 20
+      gender: male
+      height_cm: 175
+      weight_kg: 60
+      activity_level: very_active
+      goal: muscle_gain
+    expected:
+      bmi: 19.59
+      bmr: 1598.75
+      tdee: 3037.62
+      daily_calories: 3338
+      protein_g: 108.0
+      carbs_g: 517.9
+      fat_g: 92.7
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "رجل في تأهيل — لا عجز حراري"
+    input:
+      age_years: 35
+      gender: male
+      height_cm: 170
+      weight_kg: 80
+      activity_level: light
+      goal: rehabilitation
+    expected:
+      bmi: 27.68
+      bmr: 1692.5
+      tdee: 2327.19
+      daily_calories: 2327
+      protein_g: 160.0
+      carbs_g: 276.3
+      fat_g: 64.6
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة على الثبات"
+    input:
+      age_years: 40
+      gender: female
+      height_cm: 165
+      weight_kg: 62
+      activity_level: moderate
+      goal: maintenance
+    expected:
+      bmi: 22.77
+      bmr: 1290.25
+      tdee: 1999.89
+      daily_calories: 2000
+      protein_g: 86.8
+      carbs_g: 288.2
+      fat_g: 55.6
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "مراهق في الحد الأدنى للعمر"
+    input:
+      age_years: 14
+      gender: male
+      height_cm: 165
+      weight_kg: 55
+      activity_level: active
+      goal: maintenance
+    expected:
+      bmi: 20.2
+      bmr: 1516.25
+      tdee: 2615.53
+      daily_calories: 2616
+      protein_g: 77.0
+      carbs_g: 413.5
+      fat_g: 72.7
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "مسنّ في الحد الأعلى للعمر"
+    input:
+      age_years: 90
+      gender: female
+      height_cm: 150
+      weight_kg: 60
+      activity_level: sedentary
+      goal: maintenance
+    expected:
+      bmi: 26.67
+      bmr: 926.5
+      tdee: 1111.8
+      daily_calories: 1200
+      protein_g: 84.0
+      carbs_g: 135.0
+      fat_g: 36.0
+      safety_floor_applied: true
+      deficit_capped: false
+
+  - name: "سمنة مفرطة — الوزن المعدَّل للبروتين"
+    input:
+      age_years: 50
+      gender: male
+      height_cm: 175
+      weight_kg: 140
+      activity_level: sedentary
+      goal: weight_loss
+    expected:
+      bmi: 45.71
+      bmr: 2248.75
+      tdee: 2698.5
+      daily_calories: 2198
+      protein_g: 156.0
+      carbs_g: 256.1
+      fat_g: 61.1
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة صغيرة الحجم — سقف العجز 25%"
+    input:
+      age_years: 30
+      gender: female
+      height_cm: 150
+      weight_kg: 50
+      activity_level: sedentary
+      goal: weight_loss
+    expected:
+      bmi: 22.22
+      bmr: 1126.5
+      tdee: 1351.8
+      daily_calories: 1200
+      protein_g: 90.0
+      carbs_g: 135.0
+      fat_g: 33.3
+      safety_floor_applied: true
+      deficit_capped: true
+
+  - name: "رجل طويل نشيط"
+    input:
+      age_years: 28
+      gender: male
+      height_cm: 195
+      weight_kg: 95
+      activity_level: active
+      goal: weight_loss
+    expected:
+      bmi: 24.98
+      bmr: 2033.75
+      tdee: 3508.22
+      daily_calories: 3008
+      protein_g: 171.0
+      carbs_g: 393.0
+      fat_g: 83.6
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة رياضية تبني عضلًا"
+    input:
+      age_years: 26
+      gender: female
+      height_cm: 170
+      weight_kg: 58
+      activity_level: very_active
+      goal: muscle_gain
+    expected:
+      bmi: 20.07
+      bmr: 1351.5
+      tdee: 2567.85
+      daily_calories: 2868
+      protein_g: 104.4
+      carbs_g: 433.4
+      fat_g: 79.7
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "رجل خامل على الثبات"
+    input:
+      age_years: 55
+      gender: male
+      height_cm: 172
+      weight_kg: 78
+      activity_level: sedentary
+      goal: maintenance
+    expected:
+      bmi: 26.37
+      bmr: 1585.0
+      tdee: 1902.0
+      daily_calories: 1902
+      protein_g: 109.2
+      carbs_g: 247.4
+      fat_g: 52.8
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة في تأهيل بعد جراحة"
+    input:
+      age_years: 38
+      gender: female
+      height_cm: 162
+      weight_kg: 70
+      activity_level: light
+      goal: rehabilitation
+    expected:
+      bmi: 26.67
+      bmr: 1361.5
+      tdee: 1872.06
+      daily_calories: 1872
+      protein_g: 140.0
+      carbs_g: 211.0
+      fat_g: 52.0
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "حد أدنى للوزن"
+    input:
+      age_years: 30
+      gender: female
+      height_cm: 150
+      weight_kg: 30
+      activity_level: sedentary
+      goal: maintenance
+    expected:
+      bmi: 13.33
+      bmr: 926.5
+      tdee: 1111.8
+      daily_calories: 1200
+      protein_g: 42.0
+      carbs_g: 183.0
+      fat_g: 33.3
+      safety_floor_applied: true
+      deficit_capped: false
+
+  - name: "حد أعلى للوزن"
+    input:
+      age_years: 45
+      gender: male
+      height_cm: 190
+      weight_kg: 200
+      activity_level: sedentary
+      goal: weight_loss
+    expected:
+      bmi: 55.4
+      bmr: 2967.5
+      tdee: 3561.0
+      daily_calories: 3061
+      protein_g: 199.7
+      carbs_g: 374.3
+      fat_g: 85.0
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "رجل نشط على الثبات"
+    input:
+      age_years: 33
+      gender: male
+      height_cm: 178
+      weight_kg: 75
+      activity_level: moderate
+      goal: maintenance
+    expected:
+      bmi: 23.67
+      bmr: 1702.5
+      tdee: 2638.88
+      daily_calories: 2639
+      protein_g: 105.0
+      carbs_g: 389.8
+      fat_g: 73.3
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة متوسطة تريد إنقاص الوزن"
+    input:
+      age_years: 35
+      gender: female
+      height_cm: 168
+      weight_kg: 80
+      activity_level: light
+      goal: weight_loss
+    expected:
+      bmi: 28.34
+      bmr: 1514.0
+      tdee: 2081.75
+      daily_calories: 1582
+      protein_g: 144.0
+      carbs_g: 143.5
+      fat_g: 48.0
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "شاب نحيف يبني عضلًا"
+    input:
+      age_years: 22
+      gender: male
+      height_cm: 182
+      weight_kg: 65
+      activity_level: moderate
+      goal: muscle_gain
+    expected:
+      bmi: 19.62
+      bmr: 1682.5
+      tdee: 2607.88
+      daily_calories: 2908
+      protein_g: 117.0
+      carbs_g: 428.2
+      fat_g: 80.8
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة كبيرة في تأهيل"
+    input:
+      age_years: 65
+      gender: female
+      height_cm: 158
+      weight_kg: 68
+      activity_level: sedentary
+      goal: rehabilitation
+    expected:
+      bmi: 27.24
+      bmr: 1181.5
+      tdee: 1417.8
+      daily_calories: 1418
+      protein_g: 136.0
+      carbs_g: 126.7
+      fat_g: 40.8
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "رجل شديد النشاط يفقد وزنًا"
+    input:
+      age_years: 29
+      gender: male
+      height_cm: 185
+      weight_kg: 105
+      activity_level: very_active
+      goal: weight_loss
+    expected:
+      bmi: 30.68
+      bmr: 2066.25
+      tdee: 3925.88
+      daily_calories: 3426
+      protein_g: 151.2
+      carbs_g: 491.2
+      fat_g: 95.2
+      safety_floor_applied: false
+      deficit_capped: false
+
+  - name: "امرأة خفيفة النشاط بسمنة"
+    input:
+      age_years: 48
+      gender: female
+      height_cm: 157
+      weight_kg: 88
+      activity_level: light
+      goal: weight_loss
+    expected:
+      bmi: 35.7
+      bmr: 1460.25
+      tdee: 2007.84
+      daily_calories: 1508
+      protein_g: 114.5
+      carbs_g: 168.3
+      fat_g: 41.9
+      safety_floor_applied: false
+      deficit_capped: false

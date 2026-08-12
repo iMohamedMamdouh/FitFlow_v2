@@ -1,0 +1,79 @@
+# حالات مرجعية لقرار الأولوية
+#
+# القاعدة السريرية الحاكمة: الإصابة الحادة تسبق كل شيء. مريض بإصابة حادة
+# وسمنة يحتاج تهدئة الإصابة أولًا — العجز الحراري أثناء الالتئام يؤخره.
+
+cases:
+  - name: "لا إصابة ومؤشر كتلة طبيعي"
+    bmi_profile: {height_cm: 175, weight_kg: 70}
+    goal: maintenance
+    injuries: []
+    expected: FITNESS
+
+  - name: "سمنة بلا إصابة"
+    bmi_profile: {height_cm: 170, weight_kg: 95}
+    goal: weight_loss
+    injuries: []
+    expected: WEIGHT_LOSS
+
+  - name: "وزن زائد مع هدف إنقاص"
+    bmi_profile: {height_cm: 175, weight_kg: 82}
+    goal: weight_loss
+    injuries: []
+    expected: WEIGHT_LOSS
+
+  - name: "وزن زائد بلا هدف إنقاص"
+    bmi_profile: {height_cm: 175, weight_kg: 80}
+    goal: maintenance
+    injuries: []
+    expected: FITNESS
+
+  - name: "إصابة حادة بوزن طبيعي"
+    bmi_profile: {height_cm: 175, weight_kg: 70}
+    goal: rehabilitation
+    injuries: [{slug: acl-tear, status: acute, pain: 8}]
+    expected: REHAB_ONLY
+
+  - name: "إصابة حادة مع سمنة — الحادة تسبق"
+    bmi_profile: {height_cm: 170, weight_kg: 100}
+    goal: weight_loss
+    injuries: [{slug: acl-tear, status: acute, pain: 7}]
+    expected: REHAB_ONLY
+
+  - name: "إصابة تحت حادة مع سمنة"
+    bmi_profile: {height_cm: 170, weight_kg: 100}
+    goal: weight_loss
+    injuries: [{slug: acl-tear, status: subacute, pain: 4}]
+    expected: REHAB_PLUS_DIET
+
+  - name: "إصابة مزمنة مع سمنة"
+    bmi_profile: {height_cm: 165, weight_kg: 90}
+    goal: weight_loss
+    injuries: [{slug: low-back-pain, status: chronic, pain: 3}]
+    expected: REHAB_PLUS_DIET
+
+  - name: "إصابة تحت حادة بوزن طبيعي"
+    bmi_profile: {height_cm: 175, weight_kg: 70}
+    goal: rehabilitation
+    injuries: [{slug: ankle-sprain, status: subacute, pain: 3}]
+    expected: REHAB_ONLY
+
+  - name: "إصابة متعافية لا تؤثر"
+    bmi_profile: {height_cm: 175, weight_kg: 70}
+    goal: maintenance
+    injuries: [{slug: ankle-sprain, status: recovered, pain: 0}]
+    expected: FITNESS
+
+  - name: "إصابة متعافية مع سمنة"
+    bmi_profile: {height_cm: 168, weight_kg: 92}
+    goal: weight_loss
+    injuries: [{slug: ankle-sprain, status: recovered, pain: 0}]
+    expected: WEIGHT_LOSS
+
+  - name: "إصابتان إحداهما حادة"
+    bmi_profile: {height_cm: 175, weight_kg: 70}
+    goal: rehabilitation
+    injuries:
+      - {slug: low-back-pain, status: chronic, pain: 2}
+      - {slug: acl-tear, status: acute, pain: 9}
+    expected: REHAB_ONLY
