@@ -33,7 +33,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U fitflow"
+          --health-cmd "pg_isready -U fitflow -d fitflow_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
@@ -57,6 +57,10 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          # الافتراضي يبحث عن uv.lock، ونحن نثبّت من pyproject.toml مباشرة
+          # لا عبر uv sync. بدون توجيهه يفشل الإجراء عند حساب مفتاح الكاش،
+          # فتموت الوظيفة قبل تشغيل أي فحص.
+          cache-dependency-glob: backend/pyproject.toml
 
       - name: Install dependencies
         run: |
