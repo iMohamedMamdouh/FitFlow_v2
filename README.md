@@ -50,10 +50,38 @@ make up
 
 ### تطوير خارج الحاويات
 
+لو Docker مش متاح أو مش عايزه:
+
 ```bash
-make setup      # venv + node_modules + pre-commit
-make check      # نفس الفحوصات اللي بتشغّلها CI
+make setup          # venv + node_modules + pre-commit
+make dev-backend    # تيرمنال أول  — migrations + seed + uvicorn
+make dev-frontend   # تيرمنال ثانٍ — next dev
 ```
+
+بيحتاج PostgreSQL 16 شغّال محليًا وقاعدتَي بيانات `fitflow` و`fitflow_test`:
+
+```bash
+psql postgres -c "CREATE USER fitflow WITH PASSWORD 'fitflow' CREATEDB;"
+createdb -O fitflow fitflow
+createdb -O fitflow fitflow_test
+```
+
+ثم عدّل `POSTGRES_PASSWORD` في `.env` ليطابق كلمة السر أعلاه.
+
+### استكشاف الأعطال
+
+```bash
+make doctor     # يعرض الأدوات المتاحة وحالتها ويحدد سبب أي عطل
+```
+
+| الرسالة | السبب والحل |
+|---------|-------------|
+| `unknown flag: --build` | Docker Compose غير مثبّت. ثبّت Docker Desktop، أو استخدم مسار "تطوير خارج الحاويات" أعلاه |
+| `Cannot connect to the Docker daemon` | Docker Desktop مقفول — افتحه وانتظر حتى يستقر |
+| `redis:"error"` في `/health/ready` | Redis غير مشغّل. متوقع خارج Docker ولا يعطّل شيئًا — مطلوب من المرحلة 9 |
+| `SECRET_KEY لازم يكون 32 حرف` | لم يُنشأ `.env` — نفّذ `cp .env.example .env` |
+| `connection refused` على 5432 | PostgreSQL متوقف، أو `POSTGRES_PASSWORD` في `.env` لا يطابق كلمة سر المستخدم |
+| بورت مشغول | غيّر `BACKEND_PORT` أو `FRONTEND_PORT` في `.env` |
 
 ## الأوامر
 
