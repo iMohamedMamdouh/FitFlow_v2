@@ -1,6 +1,6 @@
 const PHASES = [
   { id: "0", title: "التأسيس", detail: "Monorepo + Docker + حواجز الجودة + CI", done: true },
-  { id: "1", title: "قاعدة البيانات والمصادقة", detail: "Auth + RBAC + Audit Log", done: false },
+  { id: "1", title: "قاعدة البيانات والمصادقة", detail: "Auth + RBAC + Audit Log", done: true },
   { id: "2", title: "نموذج البيانات الكامل", detail: "الجداول والقيود وآلة الحالات", done: false },
   { id: "4", title: "محرك القواعد", detail: "المنطق العلمي + Golden Tests", done: false },
 ];

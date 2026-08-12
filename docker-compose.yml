@@ -43,12 +43,17 @@ services:
     environment:
       POSTGRES_HOST: postgres
       REDIS_HOST: redis
+    # الـ migrations تُطبَّق قبل الإقلاع، فلا يبدأ التطبيق على مخطط قديم.
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       # إعادة التحميل التلقائي أثناء التطوير
       - ./backend/app:/app/app
       - ./backend/tests:/app/tests
+      - ./backend/alembic:/app/alembic
     depends_on:
       postgres:
         condition: service_healthy

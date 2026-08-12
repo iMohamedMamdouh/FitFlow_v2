@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 14
     cors_origins: str = "http://localhost:3000"
 
+    # ---- أول حساب مدير (يستخدمه سكربت التهيئة فقط) ----
+    first_admin_email: str = "admin@example.com"
+    first_admin_password: SecretStr = SecretStr("ChangeMe_Admin_2026!")
+    first_admin_name: str = "مدير النظام"
+
     @field_validator("secret_key")
     @classmethod
     def _secret_key_is_strong(cls, value: SecretStr) -> SecretStr:

@@ -21,6 +21,31 @@ jobs:
       run:
         working-directory: backend
 
+    # الاختبارات تعمل على PostgreSQL حقيقي — النظام يعتمد على أنواع وقيود
+    # خاصة به، واختباره على محرك آخر يعني اختبار نظام مختلف عن المنشور.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: fitflow
+          POSTGRES_PASSWORD: fitflow
+          POSTGRES_DB: fitflow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fitflow"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      POSTGRES_USER: fitflow
+      POSTGRES_PASSWORD: fitflow
+      POSTGRES_DB: fitflow_test
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: "5432"
+      SECRET_KEY: ci_secret_key_at_least_32_characters_long
+
     steps:
       - uses: actions/checkout@v4
 
@@ -46,6 +71,12 @@ jobs:
 
       - name: Type check (mypy strict)
         run: .venv/bin/mypy app
+
+      - name: Migrations are reversible (upgrade → downgrade → upgrade)
+        run: |
+          .venv/bin/alembic upgrade head
+          .venv/bin/alembic downgrade base
+          .venv/bin/alembic upgrade head
 
       - name: Tests
         run: .venv/bin/python -m pytest

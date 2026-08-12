@@ -38,6 +38,27 @@ clean: ## إيقاف الخدمات وحذف الـ volumes (يمسح قاعدة
 logs: ## متابعة سجلات الخدمات
 	docker compose logs -f
 
+# --------------------------------------------------------------- database
+.PHONY: migrate
+migrate: ## تطبيق آخر الـ migrations
+	docker compose exec backend alembic upgrade head
+
+.PHONY: migration
+migration: ## إنشاء migration جديدة — الاستخدام: make migration m="add table"
+	docker compose exec backend alembic revision --autogenerate -m "$(m)"
+	@echo "⚠️  راجع الملف المولَّد يدويًا قبل الـ commit — التوليد التلقائي ليس مضمونًا."
+
+.PHONY: migrate-test
+migrate-test: ## اختبار الـ migrations: upgrade → downgrade → upgrade (إلزامي قبل أي PR)
+	docker compose exec backend alembic upgrade head
+	docker compose exec backend alembic downgrade base
+	docker compose exec backend alembic upgrade head
+	@echo "✓ الـ migrations قابلة للتراجع"
+
+.PHONY: seed
+seed: ## إنشاء أول حساب مدير
+	docker compose exec backend python -m app.cli.seed
+
 .PHONY: ps
 ps: ## حالة الخدمات
 	docker compose ps

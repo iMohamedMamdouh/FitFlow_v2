@@ -37,7 +37,8 @@ RUN groupadd --system app && useradd --system --gid app --home /app app
 
 COPY --from=builder /install /usr/local
 COPY --chown=app:app app ./app
-COPY --chown=app:app pyproject.toml ./
+COPY --chown=app:app alembic ./alembic
+COPY --chown=app:app alembic.ini pyproject.toml ./
 
 USER app
 
