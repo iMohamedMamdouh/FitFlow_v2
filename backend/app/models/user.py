@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import enum
 
-from sqlalchemy import Boolean, CheckConstraint, Enum, String, text
+from sqlalchemy import Boolean, CheckConstraint, Enum, String, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, SoftDeleteMixin, TimestampMixin, UUIDPrimaryKeyMixin
@@ -51,6 +51,10 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         # إدخال صيغة مختلفة تكسر فحص التفرّد.
         CheckConstraint("email = lower(email)", name="email_is_lowercase"),
         CheckConstraint("position('@' in email) > 1", name="email_has_local_part"),
+        # زائد منطقيًا (المفتاح الأساسي وحده يكفي)، لكنه هدف المفتاح الأجنبي
+        # المركّب في specialist_patients الذي يفرض أن يكون المُسنَد إليه
+        # أخصائيًا فعلًا. Postgres يشترط فهرسًا فريدًا على أعمدة الهدف.
+        UniqueConstraint("id", "role", name="id_role"),
     )
 
     @property

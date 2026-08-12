@@ -68,12 +68,23 @@ def _migrate_test_database() -> None:
 
 @pytest.fixture(autouse=True)
 async def _clean_tables() -> AsyncIterator[None]:
-    """تفريغ الجداول بعد كل اختبار حتى تبقى الاختبارات مستقلة."""
+    """تفريغ الجداول بعد كل اختبار حتى تبقى الاختبارات مستقلة.
+
+    القائمة تُقرأ من قاعدة البيانات لا تُكتب يدويًا: جدول جديد يُنسى في قائمة
+    ثابتة يسرّب بياناته إلى الاختبار التالي، وينتج فشلًا يعتمد على ترتيب
+    التنفيذ — أصعب أنواع الفشل في التشخيص.
+    """
     yield
     async with engine.begin() as conn:
-        await conn.execute(
-            text("TRUNCATE TABLE audit_logs, refresh_tokens, users RESTART IDENTITY CASCADE")
+        result = await conn.execute(
+            text(
+                "SELECT tablename FROM pg_tables"
+                " WHERE schemaname = 'public' AND tablename <> 'alembic_version'"
+            )
         )
+        tables = [f'"{row[0]}"' for row in result]
+        if tables:
+            await conn.execute(text(f"TRUNCATE TABLE {', '.join(tables)} RESTART IDENTITY CASCADE"))
 
 
 @pytest.fixture
