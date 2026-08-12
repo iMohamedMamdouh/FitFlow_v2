@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import SecretStr, computed_field, field_validator
@@ -14,10 +15,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 Environment = Literal["local", "staging", "production"]
 
+_BACKEND_DIR = Path(__file__).resolve().parents[2]
+_REPO_ROOT = _BACKEND_DIR.parent
+
+# مسارات مطلقة لا نسبية: المسار النسبي يُحلّ من مجلد التشغيل، فيجد الملف
+# عند تشغيل uvicorn من الجذر ويفقده عند تشغيله من backend/. الترتيب يعني
+# أن backend/.env — إن وُجد — يغلب ملف الجذر.
+_ENV_FILES = (_REPO_ROOT / ".env", _BACKEND_DIR / ".env")
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_FILES,
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
