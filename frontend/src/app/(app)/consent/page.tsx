@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { Card, CardHeader } from "@/components/ui/card";
 import { getProfile } from "@/lib/api/queries";
 import { formatDateTime } from "@/lib/format";
+import { readLocale } from "@/lib/preferences";
 import { ConsentForm } from "./consent-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ConsentPage() {
   const t = await getTranslations("consent");
-  const profile = await getProfile();
+  const [profile, locale] = await Promise.all([getProfile(), readLocale()]);
 
   // لا موافقة بلا ملف: الخادم يرفض تسجيلها، فالتوجيه هنا يمنع رسالة خطأ.
   if (profile === null) redirect("/onboarding");
@@ -41,7 +42,7 @@ export default async function ConsentPage() {
       <Card>
         {profile.consent_accepted_at !== null ? (
           <Alert tone="success">
-            {t("acceptedAt", { date: formatDateTime(profile.consent_accepted_at) })}
+            {t("acceptedAt", { date: formatDateTime(locale, profile.consent_accepted_at) })}
           </Alert>
         ) : (
           <ConsentForm />

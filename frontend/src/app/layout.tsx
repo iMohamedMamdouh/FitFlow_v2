@@ -1,14 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Rubik } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
-import { LOCALE, TIME_ZONE } from "@/i18n/request";
+import { TIME_ZONE, directionOf } from "@/i18n/config";
+import { readLocale, readTheme } from "@/lib/preferences";
 import "./globals.css";
 
-const cairo = Cairo({
+// خطّان يدعمان العربية واللاتينية معًا — فلا يتغيّر إحساس الصفحة عند
+// تبديل اللغة، ولا نحمّل خطًا ثانيًا لكل لغة.
+const plex = IBM_Plex_Sans_Arabic({
   subsets: ["arabic", "latin"],
-  variable: "--font-cairo",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex",
+  display: "swap",
+});
+
+const rubik = Rubik({
+  subsets: ["arabic", "latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-rubik",
   display: "swap",
 });
 
@@ -23,19 +34,25 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#14120f" },
   ],
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  // ar + rtl مثبّتان من المستوى الجذري (قرار ADR-004).
-  const messages = await getMessages();
+  // اللغة والمظهر يُقرآن على الخادم: الصفحة تصل بالاتجاه والألوان
+  // الصحيحة من أول بايت، بلا وميض ولا قفزة تخطيط.
+  const [locale, theme, messages] = await Promise.all([readLocale(), readTheme(), getMessages()]);
 
   return (
-    <html lang={LOCALE} dir="rtl" className={cairo.variable}>
-      <body className="bg-background text-foreground min-h-dvh font-sans antialiased">
-        <NextIntlClientProvider locale={LOCALE} timeZone={TIME_ZONE} messages={messages}>
+    <html
+      lang={locale}
+      dir={directionOf(locale)}
+      data-theme={theme}
+      className={`${plex.variable} ${rubik.variable}`}
+    >
+      <body className="bg-paper text-ink min-h-dvh font-sans antialiased">
+        <NextIntlClientProvider locale={locale} timeZone={TIME_ZONE} messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>

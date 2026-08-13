@@ -1,90 +1,169 @@
 @import "tailwindcss";
 
 /*
-  لوحة ألوان واحدة معرَّفة كمتغيّرات، لا ألوان مكتوبة داخل المكوّنات.
-  التصميم عربي RTL من الجذر (ADR-004): كل تباعد اتجاهي في الواجهة يستخدم
-  الخصائص المنطقية (ms/me/ps/pe) لا اليمين واليسار، فلا شيء ينقلب لو
-  أُضيفت لغة يسار-يمين لاحقًا.
+  ─────────────────────────────────────────────────────────────────────
+  نظام التصميم: "ورق عيادة"
+  ─────────────────────────────────────────────────────────────────────
+
+  الاتجاه مقصود بعيدًا عن المظهر الشائع (رمادي أزرق + بنفسجي متدرّج +
+  زجاج شفاف): الخلفية **ورقية دافئة** لا رمادية باردة، والأسود مائل
+  للبني لا للأزرق، واللون الأساسي **صنوبري داكن** مع لون ثانٍ **طيني**
+  للنداءات. النتيجة أقرب لمطبوعة طبية منها إلى لوحة تحكم.
+
+  الوضع الداكن ليس عكسًا آليًا: أسوده دافئ (#14120F) لا أزرق، فيبقى
+  الطابع نفسه في الوضعين.
+
+  الفاتح هو الافتراضي. لا نتبع `prefers-color-scheme` تلقائيًا — المظهر
+  اختيار صريح يُخزَّن في كوكي ويصل من الخادم، فلا يومض شيء عند التحميل.
 */
-:root {
-  --background: #f8fafc;
-  --surface: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --muted-surface: #f1f5f9;
-  --border: #e2e8f0;
-  --primary: #0d9488;
-  --primary-strong: #0f766e;
-  --primary-foreground: #ffffff;
-  --primary-soft: #ccfbf1;
-  --danger: #dc2626;
-  --danger-soft: #fee2e2;
-  --warning: #b45309;
-  --warning-soft: #fef3c7;
-  --success: #15803d;
-  --success-soft: #dcfce7;
-  --info: #1d4ed8;
-  --info-soft: #dbeafe;
-  --ring: #14b8a6;
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --paper: #faf7f2; /* خلفية الصفحة — ورق دافئ */
+  --surface: #ffffff; /* البطاقات */
+  --raised: #f2ede4; /* مساحات ثانوية داخل البطاقة */
+  --ink: #171310; /* النص الأساسي — أسود دافئ */
+  --subtle: #6d6358; /* نص ثانوي */
+  --faint: #9a8f82; /* تسميات وحواشٍ */
+  --line: #e3dbcf; /* الحدود */
+  --line-strong: #cfc4b4;
+
+  --accent: #0f5c4e; /* صنوبري داكن — الهوية */
+  --accent-hover: #0b463c;
+  --accent-ink: #ffffff; /* النص فوق اللون الأساسي */
+  --accent-wash: #e3efe9; /* خلفية خفيفة بلون الهوية */
+
+  --clay: #c25327; /* طيني — النداءات والتمييز */
+  --clay-hover: #a54419;
+  --clay-ink: #ffffff;
+  --clay-wash: #fbe9df;
+
+  --positive: #2f6b3a;
+  --positive-wash: #e3f0e2;
+  --caution: #97591a;
+  --caution-wash: #fbeedb;
+  --critical: #a92f26;
+  --critical-wash: #fbe4e1;
+
+  /* شريط النداء الأخير: لون خاص لأن `accent` في الوضع الداكن فاتح،
+     وكتلة بعرض الصفحة به تصبح أشدّ سطوعًا من كل ما حولها. */
+  --cta: #0f5c4e;
+  --cta-ink: #f4efe6;
+
+  --ring: #0f5c4e;
+  --shadow-card: 0 1px 2px rgb(23 19 16 / 0.04), 0 8px 24px -12px rgb(23 19 16 / 0.14);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    --surface: #0f172a;
-    --foreground: #e2e8f0;
-    --muted: #94a3b8;
-    --muted-surface: #1e293b;
-    --border: #1e293b;
-    --primary: #2dd4bf;
-    --primary-strong: #5eead4;
-    --primary-foreground: #042f2e;
-    --primary-soft: #134e4a;
-    --danger: #f87171;
-    --danger-soft: #450a0a;
-    --warning: #fbbf24;
-    --warning-soft: #451a03;
-    --success: #4ade80;
-    --success-soft: #052e16;
-    --info: #93c5fd;
-    --info-soft: #172554;
-    --ring: #2dd4bf;
-  }
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --paper: #14120f; /* أسود دافئ لا أزرق */
+  --surface: #1d1a15;
+  --raised: #272219;
+  --ink: #f4efe6;
+  --subtle: #a99e8f;
+  --faint: #7d7263;
+  --line: #322c23;
+  --line-strong: #463e32;
+
+  --accent: #58b79d;
+  --accent-hover: #74c9b1;
+  --accent-ink: #0a2a24;
+  --accent-wash: #17332c;
+
+  --clay: #e4805a;
+  --clay-hover: #ef9673;
+  --clay-ink: #2b1108;
+  --clay-wash: #35201a;
+
+  --positive: #7bc487;
+  --positive-wash: #1c2f1f;
+  --caution: #e0a95c;
+  --caution-wash: #33260f;
+  --critical: #e88479;
+  --critical-wash: #351b19;
+
+  --cta: #17332c;
+  --cta-ink: #f4efe6;
+
+  --ring: #58b79d;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 28px -14px rgb(0 0 0 / 0.7);
 }
 
 @theme inline {
-  --color-background: var(--background);
+  --color-paper: var(--paper);
   --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-surface: var(--muted-surface);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-strong: var(--primary-strong);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary-soft: var(--primary-soft);
-  --color-danger: var(--danger);
-  --color-danger-soft: var(--danger-soft);
-  --color-warning: var(--warning);
-  --color-warning-soft: var(--warning-soft);
-  --color-success: var(--success);
-  --color-success-soft: var(--success-soft);
-  --color-info: var(--info);
-  --color-info-soft: var(--info-soft);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-subtle: var(--subtle);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+
+  --color-clay: var(--clay);
+  --color-clay-hover: var(--clay-hover);
+  --color-clay-ink: var(--clay-ink);
+  --color-clay-wash: var(--clay-wash);
+
+  --color-positive: var(--positive);
+  --color-positive-wash: var(--positive-wash);
+  --color-caution: var(--caution);
+  --color-caution-wash: var(--caution-wash);
+  --color-critical: var(--critical);
+  --color-critical-wash: var(--critical-wash);
+
+  --color-cta: var(--cta);
+  --color-cta-ink: var(--cta-ink);
+
   --color-ring: var(--ring);
-  --font-sans: var(--font-cairo), system-ui, sans-serif;
+
+  /* خطّان بشخصية مختلفة: Rubik الهندسي للعناوين والأرقام، وIBM Plex
+     Sans Arabic للنص — الاثنان يدعمان العربية واللاتينية بالوزن نفسه،
+     فلا ينكسر الإيقاع عند تبديل اللغة. */
+  --font-sans: var(--font-plex), system-ui, sans-serif;
+  --font-display: var(--font-rubik), var(--font-plex), system-ui, sans-serif;
+
+  --shadow-card: var(--shadow-card);
 }
 
-/* الأرقام العربية-الهندية تُقرأ بصعوبة في الجداول الغذائية، فنُبقي
-   الأرقام اللاتينية مع النص العربي — وهو أيضًا ما يفعله معظم التطبيقات
-   الطبية العربية. */
 body {
+  /* أرقام لاتينية مع النص العربي، وبعرض ثابت في الجداول والأرقام الكبيرة. */
   font-feature-settings: "lnum" 1;
+  background-color: var(--paper);
+  color: var(--ink);
 }
 
-/* حلقة تركيز واحدة لكل عناصر الإدخال — الاعتماد على الافتراضي يختلف بين
-   المتصفحات ويختفي أحيانًا تمامًا. */
+/* حلقة تركيز واحدة لكل العناصر — الافتراضي يختلف بين المتصفحات ويختفي
+   أحيانًا تمامًا على خلفية ملوّنة. */
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--accent-wash);
+  color: var(--ink);
+}
+
+/* شبكة نقطية خفيفة تُستخدم كخلفية للأقسام البارزة في الصفحة الخارجية. */
+.bg-grid {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

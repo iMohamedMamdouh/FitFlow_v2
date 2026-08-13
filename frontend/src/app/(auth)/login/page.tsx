@@ -22,9 +22,9 @@ export default async function LoginPage({
     <Card>
       <CardHeader title={t("loginTitle")} description={t("loginSubtitle")} />
       <LoginForm next={next ?? null} />
-      <p className="text-muted mt-5 text-center text-sm">
+      <p className="text-subtle mt-5 text-center text-sm">
         {t("noAccount")}{" "}
-        <Link href="/register" className="text-primary font-medium">
+        <Link href="/register" className="text-accent font-medium">
           {t("createOne")}
         </Link>
       </p>

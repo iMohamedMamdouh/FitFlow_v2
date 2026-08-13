@@ -1,14 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { Link } from "@/components/ui/nav-link";
 import { Alert } from "@/components/ui/alert";
 import { buttonStyles } from "@/components/ui/button";
-import { CheckboxField, SelectField, TextAreaField, TextField } from "@/components/ui/field";
+import { CheckboxCard, SelectField, TextAreaField, TextField } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { formatTime } from "@/lib/format";
+import type { Locale } from "@/i18n/config";
 import { ACTIVITY_LEVELS, ALLERGENS, GENDERS, GOALS } from "@/lib/api/schema";
 import type { ProfileRead } from "@/lib/api/schema";
 import { saveStepAction } from "./actions";
@@ -24,6 +25,7 @@ export function OnboardingForm({ step, profile, currentWeight }: Props) {
   const t = useTranslations("onboarding");
   const enums = useTranslations("enums");
   const common = useTranslations("common");
+  const locale = useLocale() as Locale;
 
   const [state, formAction] = useActionState(saveStepAction.bind(null, step), EMPTY_STEP_STATE);
 
@@ -36,7 +38,7 @@ export function OnboardingForm({ step, profile, currentWeight }: Props) {
       {state.error !== null && <Alert tone="danger">{state.error}</Alert>}
       {state.savedAt !== null && (
         <Alert tone="success">
-          {t("autosaved", { time: formatTime(new Date(state.savedAt)) })}
+          {t("autosaved", { time: formatTime(locale, new Date(state.savedAt)) })}
         </Alert>
       )}
 
@@ -155,7 +157,7 @@ export function OnboardingForm({ step, profile, currentWeight }: Props) {
           <fieldset className="grid gap-3 sm:grid-cols-2">
             <legend className="sr-only">{t("steps.allergies")}</legend>
             {ALLERGENS.map((value) => (
-              <CheckboxField
+              <CheckboxCard
                 key={value}
                 label={enums(`allergen.${value}`)}
                 name="allergens"
@@ -175,7 +177,7 @@ export function OnboardingForm({ step, profile, currentWeight }: Props) {
         {previous !== undefined && (
           <Link
             href={`/onboarding?step=${previous}`}
-            className={buttonStyles({ variant: "ghost" })}
+            className={buttonStyles({ variant: "quiet" })}
           >
             {common("back")}
           </Link>

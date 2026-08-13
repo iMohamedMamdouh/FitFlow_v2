@@ -7,6 +7,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { apiFetch } from "@/lib/api/server";
 import { getInjuries, getInjuryTypes, getProfile } from "@/lib/api/queries";
 import { formatDate, formatNumber, todayIso } from "@/lib/format";
+import { readLocale } from "@/lib/preferences";
 import type { AttachmentRead, InjuryRead, InjuryTypeRead } from "@/lib/api/schema";
 import { AttachmentUpload } from "./attachment-upload";
 import { InjuryForm } from "./injury-form";
@@ -30,6 +31,7 @@ async function InjuryCard({
   const t = await getTranslations("injuries");
   const enums = await getTranslations("enums");
   const common = await getTranslations("common");
+  const locale = await readLocale();
 
   const injuryType = typeOf(injury, injuryTypes);
   const attachments = await apiFetch<AttachmentRead[]>(`/me/injuries/${injury.id}/attachments`);
@@ -38,7 +40,7 @@ async function InjuryCard({
     <Card>
       <CardHeader
         title={injuryType?.name_ar ?? common("unknown")}
-        description={`${formatDate(injury.injury_date)} • ${t("phase", { phase: injury.current_phase })}`}
+        description={`${formatDate(locale, injury.injury_date)} · ${t("phase", { phase: injury.current_phase })}`}
         action={
           <Badge tone={injury.status === "acute" ? "danger" : "neutral"}>
             {enums(`injuryStatus.${injury.status}`)}
@@ -46,23 +48,26 @@ async function InjuryCard({
         }
       />
 
-      <dl className="grid gap-2 text-sm sm:grid-cols-3">
-        <div>
-          <dt className="text-muted">{t("pain")}</dt>
-          <dd className="tabular-nums">{injury.pain_level}/10</dd>
-        </div>
-        <div>
-          <dt className="text-muted">{t("side")}</dt>
-          <dd>{enums(`bodySide.${injury.side}`)}</dd>
-        </div>
-        <div>
-          <dt className="text-muted">{t("hadSurgery")}</dt>
-          <dd>{injury.had_surgery ? formatDate(injury.surgery_date) : common("no")}</dd>
-        </div>
+      <dl className="grid gap-4 text-sm sm:grid-cols-3">
+        {[
+          { label: t("pain"), value: `${injury.pain_level}/10` },
+          { label: t("side"), value: enums(`bodySide.${injury.side}`) },
+          {
+            label: t("hadSurgery"),
+            value: injury.had_surgery ? formatDate(locale, injury.surgery_date) : common("no"),
+          },
+        ].map((row) => (
+          <div key={row.label}>
+            <dt className="text-faint text-[0.7rem] font-semibold tracking-[0.1em] uppercase">
+              {row.label}
+            </dt>
+            <dd className="mt-1 tabular-nums">{row.value}</dd>
+          </div>
+        ))}
       </dl>
 
       {injury.notes !== null && injury.notes !== "" && (
-        <p className="text-muted mt-3 text-sm leading-7">{injury.notes}</p>
+        <p className="text-subtle mt-4 text-sm leading-7">{injury.notes}</p>
       )}
 
       {injury.status === "acute" && (
@@ -71,23 +76,25 @@ async function InjuryCard({
         </Alert>
       )}
 
-      <section className="border-border mt-5 border-t pt-4">
-        <h3 className="text-sm font-semibold">{t("attachments.title")}</h3>
+      <section className="border-line mt-6 border-t pt-5">
+        <h3 className="font-display text-sm font-semibold tracking-tight">
+          {t("attachments.title")}
+        </h3>
         {attachments.length === 0 ? (
-          <p className="text-muted mt-2 text-sm">{t("attachments.empty")}</p>
+          <p className="text-subtle mt-2 text-sm">{t("attachments.empty")}</p>
         ) : (
-          <ul className="mt-2 flex flex-col divide-y divide-[var(--color-border)] text-sm">
+          <ul className="divide-line mt-2 flex flex-col divide-y text-sm">
             {attachments.map((attachment) => (
               <li key={attachment.id} className="flex items-center justify-between gap-3 py-2">
                 <span>{enums(`attachmentType.${attachment.file_type}`)}</span>
-                <span className="text-muted tabular-nums">
+                <span className="text-faint tabular-nums">
                   {t("attachments.size", {
-                    size: formatNumber(attachment.size_bytes / 1024, 0),
+                    size: formatNumber(locale, attachment.size_bytes / 1024, 0),
                   })}
                 </span>
                 <a
                   href={`/attachments/${injury.id}/${attachment.id}`}
-                  className="text-primary font-medium"
+                  className="text-accent font-medium hover:underline"
                 >
                   {t("attachments.download")}
                 </a>
@@ -110,10 +117,12 @@ export default async function InjuriesPage() {
   ]);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold">{t("title")}</h1>
-        <p className="text-muted text-sm leading-7">{t("subtitle")}</p>
+    <div className="mx-auto flex max-w-3xl flex-col gap-7">
+      <header className="flex flex-col gap-1.5">
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+          {t("title")}
+        </h1>
+        <p className="text-subtle text-sm leading-7">{t("subtitle")}</p>
       </header>
 
       <SetupGate profile={profile} />
@@ -124,7 +133,7 @@ export default async function InjuriesPage() {
       </Card>
 
       {injuries.length === 0 ? (
-        <p className="text-muted text-sm">{t("empty")}</p>
+        <p className="text-subtle text-sm">{t("empty")}</p>
       ) : (
         injuries.map((injury) => (
           <InjuryCard key={injury.id} injury={injury} injuryTypes={injuryTypes} />

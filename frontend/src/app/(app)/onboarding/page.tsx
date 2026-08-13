@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { Card, CardHeader } from "@/components/ui/card";
 import { getProfile, getReadings, latestWeight } from "@/lib/api/queries";
+import { cn } from "@/lib/utils";
 import { STEPS, type Step } from "./steps";
 import { OnboardingForm } from "./onboarding-form";
 
@@ -35,35 +36,46 @@ export default async function OnboardingPage({
   const index = STEPS.indexOf(step);
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold">{t("title")}</h1>
-        <p className="text-muted text-sm leading-7">{t("subtitle")}</p>
+    <div className="mx-auto flex max-w-xl flex-col gap-7">
+      <header className="flex flex-col gap-1.5">
+        <span className="text-faint text-[0.7rem] font-semibold tracking-[0.14em] uppercase">
+          {t("stepLabel", { current: index + 1, total: STEPS.length })}
+        </span>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-subtle text-sm leading-7">{t("subtitle")}</p>
       </header>
 
-      <ol className="flex flex-wrap gap-2 text-xs" aria-label={t("title")}>
+      {/* شريط تقدّم بأربع قطع: يوضّح الموقع في الرحلة بلا نسبة مئوية
+          مصطنعة، ويبقى مقروءًا في أضيق شاشة. */}
+      <ol className="flex gap-2" aria-label={t("title")}>
         {STEPS.map((name, position) => (
           <li
             key={name}
             aria-current={position === index ? "step" : undefined}
-            className={
-              position === index
-                ? "bg-primary text-primary-foreground rounded-full px-3 py-1 font-medium"
-                : position < index
-                  ? "bg-primary-soft text-primary-strong rounded-full px-3 py-1"
-                  : "bg-muted-surface text-muted rounded-full px-3 py-1"
-            }
+            className="flex flex-1 flex-col gap-1.5"
           >
-            {t(`steps.${name}`)}
+            <span
+              className={cn(
+                "h-1 rounded-full transition-colors",
+                position < index && "bg-accent",
+                position === index && "bg-clay",
+                position > index && "bg-line",
+              )}
+            />
+            <span
+              className={cn(
+                "hidden text-[0.7rem] sm:block",
+                position === index ? "text-ink font-medium" : "text-faint",
+              )}
+            >
+              {t(`steps.${name}`)}
+            </span>
           </li>
         ))}
       </ol>
 
       <Card>
-        <CardHeader
-          title={t(`steps.${step}`)}
-          description={t("stepLabel", { current: index + 1, total: STEPS.length })}
-        />
+        <CardHeader title={t(`steps.${step}`)} description={t(`${step}.hint`)} />
         <OnboardingForm step={step} profile={profile} currentWeight={latestWeight(readings)} />
       </Card>
     </div>

@@ -10,9 +10,29 @@ import type {
 
 import { cn } from "@/lib/utils";
 
+/**
+ * حقول الإدخال.
+ *
+ * التسمية صغيرة بحروف متباعدة فوق الحقل، والحقل نفسه بخلفية `raised`
+ * وحد رفيع يتلوّن بلون الهوية عند التركيز. المظهر مقصود ليقرأ كنموذج
+ * طبي منظّم لا كصندوق بحث.
+ */
+
 const controlStyles =
-  "border-border bg-surface text-foreground placeholder:text-muted w-full rounded-lg border " +
-  "px-3 py-2.5 text-sm transition-colors disabled:opacity-60";
+  "w-full rounded-lg border border-line bg-raised px-3.5 py-2.5 text-sm text-ink " +
+  "placeholder:text-faint transition-colors hover:border-line-strong " +
+  "focus:border-accent disabled:opacity-60";
+
+function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="text-faint text-[0.7rem] font-semibold tracking-[0.1em] uppercase"
+    >
+      {children}
+    </label>
+  );
+}
 
 function Wrapper({
   id,
@@ -28,17 +48,15 @@ function Wrapper({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium">
-        {label}
-      </label>
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={id}>{label}</Label>
       {children}
       {hint !== undefined && error == null && (
-        <p className="text-muted text-xs leading-5">{hint}</p>
+        <p className="text-subtle text-xs leading-5">{hint}</p>
       )}
       {/* الخطأ يُربط بالحقل عبر aria-describedby لا بالقرب البصري فقط. */}
       {error != null && (
-        <p id={`${id}-error`} role="alert" className="text-danger text-xs leading-5">
+        <p id={`${id}-error`} role="alert" className="text-critical text-xs leading-5">
           {error}
         </p>
       )}
@@ -66,7 +84,7 @@ export function TextField({
         id={id}
         aria-invalid={error != null}
         aria-describedby={error != null ? `${id}-error` : undefined}
-        className={cn(controlStyles, error != null && "border-danger", className)}
+        className={cn(controlStyles, error != null && "border-critical", className)}
         {...props}
       />
     </Wrapper>
@@ -88,7 +106,12 @@ export function SelectField({
         id={id}
         aria-invalid={error != null}
         aria-describedby={error != null ? `${id}-error` : undefined}
-        className={cn(controlStyles, error != null && "border-danger", className)}
+        className={cn(
+          controlStyles,
+          "appearance-none",
+          error != null && "border-critical",
+          className,
+        )}
         {...props}
       >
         {children}
@@ -112,7 +135,7 @@ export function TextAreaField({
         rows={3}
         aria-invalid={error != null}
         aria-describedby={error != null ? `${id}-error` : undefined}
-        className={cn(controlStyles, "resize-y", error != null && "border-danger", className)}
+        className={cn(controlStyles, "resize-y", error != null && "border-critical", className)}
         {...props}
       />
     </Wrapper>
@@ -129,11 +152,11 @@ export function CheckboxField({
   const id = useId();
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-start gap-3">
         <input
           id={id}
           type="checkbox"
-          className={cn("accent-primary mt-1 size-4 shrink-0", className)}
+          className={cn("accent-accent mt-0.5 size-4 shrink-0", className)}
           aria-describedby={error != null ? `${id}-error` : undefined}
           {...props}
         />
@@ -141,12 +164,40 @@ export function CheckboxField({
           {label}
         </label>
       </div>
-      {hint !== undefined && <p className="text-muted ms-6.5 text-xs leading-5">{hint}</p>}
+      {hint !== undefined && <p className="text-subtle ms-7 text-xs leading-5">{hint}</p>}
       {error != null && (
-        <p id={`${id}-error`} role="alert" className="text-danger ms-6.5 text-xs leading-5">
+        <p id={`${id}-error`} role="alert" className="text-critical ms-7 text-xs leading-5">
           {error}
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * مربّع اختيار بمظهر بطاقة — لقوائم مثل مسبّبات الحساسية.
+ *
+ * مساحة النقر كاملة البطاقة لا المربّع وحده: القوائم الطويلة على الموبايل
+ * تُخطئ كثيرًا حين تكون المساحة القابلة للنقر بحجم مربّع.
+ */
+export function CheckboxCard({
+  label,
+  className,
+  ...props
+}: { label: ReactNode } & InputHTMLAttributes<HTMLInputElement>) {
+  const id = useId();
+  return (
+    <label
+      htmlFor={id}
+      className={cn(
+        "border-line bg-surface hover:border-accent flex cursor-pointer items-center gap-3",
+        "rounded-lg border px-3.5 py-3 text-sm transition-colors",
+        "has-[:checked]:border-accent has-[:checked]:bg-accent-wash",
+        className,
+      )}
+    >
+      <input id={id} type="checkbox" className="accent-accent size-4 shrink-0" {...props} />
+      <span>{label}</span>
+    </label>
   );
 }

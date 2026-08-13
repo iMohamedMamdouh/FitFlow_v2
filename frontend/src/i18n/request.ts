@@ -1,18 +1,10 @@
 import { getRequestConfig } from "next-intl/server";
 
-/**
- * لغة واحدة حاليًا: العربية (ADR-004).
- *
- * الواجهة لا تحمل توجيهًا بلغات (`/ar/...`) عمدًا — إضافة مسار لغة واحدة
- * تعقيد بلا مقابل. `next-intl` موجودة رغم ذلك لأن كل نص في الواجهة يمر
- * عبر ملف الرسائل، فإضافة لغة ثانية لاحقًا تصبح ملف JSON جديدًا لا
- * مراجعة لكل مكوّن.
- */
-export const LOCALE = "ar" as const;
-export const TIME_ZONE = "Africa/Cairo";
+import { TIME_ZONE } from "./config";
+import { messagesFor } from "./messages";
+import { readLocale } from "@/lib/preferences";
 
-export default getRequestConfig(async () => ({
-  locale: LOCALE,
-  timeZone: TIME_ZONE,
-  messages: (await import("../../messages/ar.json")).default,
-}));
+export default getRequestConfig(async () => {
+  const locale = await readLocale();
+  return { locale, timeZone: TIME_ZONE, messages: messagesFor(locale) };
+});

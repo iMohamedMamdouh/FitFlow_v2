@@ -3,13 +3,20 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-const alertStyles = cva("rounded-lg border px-4 py-3 text-sm leading-6", {
+/**
+ * التنبيهات.
+ *
+ * شريط ملوّن على الحافة البادئة بدل إطار ملوّن كامل: يميّز النبرة بوضوح
+ * دون أن يتحوّل النص إلى كتلة لونية يصعب قراءتها — وهو ما يهم هنا لأن
+ * أطول تنبيهات هذا التطبيق نصوص طبية تُقرأ فعلًا لا تُلمَح.
+ */
+const alertStyles = cva("rounded-lg border-s-4 px-4 py-3.5 text-sm leading-7", {
   variants: {
     tone: {
-      info: "border-info/30 bg-info-soft text-info",
-      success: "border-success/30 bg-success-soft text-success",
-      warning: "border-warning/30 bg-warning-soft text-warning",
-      danger: "border-danger/30 bg-danger-soft text-danger",
+      info: "border-s-accent bg-accent-wash text-ink",
+      success: "border-s-positive bg-positive-wash text-ink",
+      warning: "border-s-caution bg-caution-wash text-ink",
+      danger: "border-s-critical bg-critical-wash text-ink",
     },
   },
   defaultVariants: { tone: "info" },
@@ -38,15 +45,16 @@ export function Alert({
 }
 
 const badgeStyles = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
   {
     variants: {
       tone: {
-        neutral: "bg-muted-surface text-muted",
-        primary: "bg-primary-soft text-primary-strong",
-        success: "bg-success-soft text-success",
-        warning: "bg-warning-soft text-warning",
-        danger: "bg-danger-soft text-danger",
+        neutral: "bg-raised text-subtle",
+        accent: "bg-accent-wash text-accent",
+        clay: "bg-clay-wash text-clay",
+        success: "bg-positive-wash text-positive",
+        warning: "bg-caution-wash text-caution",
+        danger: "bg-critical-wash text-critical",
       },
     },
     defaultVariants: { tone: "neutral" },

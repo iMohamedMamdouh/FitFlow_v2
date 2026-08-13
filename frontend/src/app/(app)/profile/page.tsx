@@ -2,25 +2,24 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { SetupGate } from "@/components/setup-gate";
-import { Link } from "@/components/ui/nav-link";
 import { Alert } from "@/components/ui/alert";
 import { buttonStyles } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
+import { Link } from "@/components/ui/nav-link";
 import { getCurrentUser, getProfile, getReadings, latestWeight } from "@/lib/api/queries";
 import { bodyMassIndex, formatDateTime, formatNumber } from "@/lib/format";
+import { readLocale } from "@/lib/preferences";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("profile");
   return { title: t("title") };
 }
 
-function List({ label, items }: { label: string; items: readonly unknown[] }) {
+function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-muted text-sm">{label}</dt>
-      <dd className="text-sm leading-7">
-        {items.length === 0 ? "—" : items.map((item) => String(item)).join(" • ")}
-      </dd>
+      <dt className="text-faint text-[0.7rem] font-semibold tracking-[0.1em] uppercase">{label}</dt>
+      <dd className="mt-1.5 text-sm leading-7">{value}</dd>
     </div>
   );
 }
@@ -29,6 +28,8 @@ export default async function ProfilePage() {
   const t = await getTranslations("profile");
   const enums = await getTranslations("enums");
   const consent = await getTranslations("consent");
+  const dashboard = await getTranslations("dashboard");
+  const locale = await readLocale();
 
   const [user, profile, readings] = await Promise.all([
     getCurrentUser(),
@@ -38,8 +39,8 @@ export default async function ProfilePage() {
 
   if (profile === null) {
     return (
-      <div className="mx-auto flex max-w-2xl flex-col gap-5">
-        <h1 className="text-xl font-bold">{t("title")}</h1>
+      <div className="mx-auto flex max-w-2xl flex-col gap-6">
+        <h1 className="font-display text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <SetupGate profile={null} />
       </div>
     );
@@ -50,11 +51,19 @@ export default async function ProfilePage() {
   // `allergens` اختياري في المخطط المولَّد (له قيمة افتراضية على الخادم).
   const allergens = profile.allergens ?? [];
 
+  const lists = [
+    { label: t("medicalHistory"), items: profile.medical_history },
+    { label: t("chronic"), items: profile.chronic_diseases },
+    { label: t("medications"), items: profile.medications },
+  ];
+
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold">{t("title")}</h1>
-        <p className="text-muted text-sm" dir="ltr">
+    <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <header className="flex flex-col gap-1.5">
+        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+          {t("title")}
+        </h1>
+        <p className="text-subtle text-sm" dir="ltr">
           {user.email}
         </p>
       </header>
@@ -73,31 +82,30 @@ export default async function ProfilePage() {
             </Link>
           }
         />
-        <dl className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <dt className="text-muted text-sm">{t("age")}</dt>
-            <dd className="text-sm">{t("ageValue", { years: profile.age_years })}</dd>
-          </div>
-          <div>
-            <dt className="text-muted text-sm">{t("height")}</dt>
-            <dd className="text-sm tabular-nums">{formatNumber(profile.height_cm, 1)} سم</dd>
-          </div>
-          <div>
-            <dt className="text-muted text-sm">{t("weight")}</dt>
-            <dd className="text-sm tabular-nums">{formatNumber(weight, 1)} كجم</dd>
-          </div>
-          <div>
-            <dt className="text-muted text-sm">{t("bmi")}</dt>
-            <dd className="text-sm tabular-nums">{formatNumber(bmi, 1)}</dd>
-          </div>
-          <div>
-            <dt className="text-muted text-sm">{t("goal")}</dt>
-            <dd className="text-sm">{enums(`goal.${profile.goal}`)}</dd>
-          </div>
-          <div>
-            <dt className="text-muted text-sm">{t("activity")}</dt>
-            <dd className="text-sm">{enums(`activityLevel.${profile.activity_level}`)}</dd>
-          </div>
+        <dl className="grid gap-5 sm:grid-cols-3">
+          <Row label={t("age")} value={t("ageValue", { years: profile.age_years })} />
+          <Row
+            label={t("height")}
+            value={
+              <span className="tabular-nums">
+                {formatNumber(locale, profile.height_cm, 1)} {t("cm")}
+              </span>
+            }
+          />
+          <Row
+            label={t("weight")}
+            value={
+              <span className="tabular-nums">
+                {formatNumber(locale, weight, 1)} {dashboard("kg")}
+              </span>
+            }
+          />
+          <Row
+            label={t("bmi")}
+            value={<span className="tabular-nums">{formatNumber(locale, bmi, 1)}</span>}
+          />
+          <Row label={t("goal")} value={enums(`goal.${profile.goal}`)} />
+          <Row label={t("activity")} value={enums(`activityLevel.${profile.activity_level}`)} />
         </dl>
       </Card>
 
@@ -106,21 +114,24 @@ export default async function ProfilePage() {
         <p className="text-sm leading-7">
           {allergens.length === 0
             ? "—"
-            : allergens.map((value) => enums(`allergen.${value}`)).join(" • ")}
+            : allergens.map((value) => enums(`allergen.${value}`)).join(" · ")}
         </p>
       </Card>
 
       <Card>
         <CardHeader title={t("medicalHistory")} />
-        <dl className="flex flex-col gap-3">
-          <List label={t("medicalHistory")} items={profile.medical_history} />
-          <List label={t("chronic")} items={profile.chronic_diseases} />
-          <List label={t("medications")} items={profile.medications} />
+        <dl className="flex flex-col gap-5">
+          {lists.map((list) => (
+            <Row
+              key={list.label}
+              label={list.label}
+              value={
+                list.items.length === 0 ? "—" : list.items.map((item) => String(item)).join(" · ")
+              }
+            />
+          ))}
           {profile.notes !== null && profile.notes !== "" && (
-            <div>
-              <dt className="text-muted text-sm">{t("notes")}</dt>
-              <dd className="text-sm leading-7">{profile.notes}</dd>
-            </div>
+            <Row label={t("notes")} value={profile.notes} />
           )}
         </dl>
       </Card>
@@ -131,7 +142,7 @@ export default async function ProfilePage() {
           <Alert tone="warning">{consent("required")}</Alert>
         ) : (
           <Alert tone="success">
-            {consent("acceptedAt", { date: formatDateTime(profile.consent_accepted_at) })}
+            {consent("acceptedAt", { date: formatDateTime(locale, profile.consent_accepted_at) })}
           </Alert>
         )}
       </Card>

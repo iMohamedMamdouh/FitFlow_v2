@@ -23,14 +23,17 @@ export function AttachmentUpload({ injuryId }: { injuryId: string }) {
   );
 
   return (
-    <form action={formAction} className="mt-4 flex flex-col gap-3">
+    <form action={formAction} className="mt-5 flex flex-col gap-4">
       {state.error !== null && <Alert tone="danger">{state.error}</Alert>}
       {state.message !== null && <Alert tone="success">{state.message}</Alert>}
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={`file-${injuryId}`} className="text-sm font-medium">
-            {t("upload")}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor={`file-${injuryId}`}
+            className="text-faint text-[0.7rem] font-semibold tracking-[0.1em] uppercase"
+          >
+            {t("file")}
           </label>
           <input
             id={`file-${injuryId}`}
@@ -38,12 +41,12 @@ export function AttachmentUpload({ injuryId }: { injuryId: string }) {
             name="file"
             accept={ACCEPT}
             required
-            className="border-border bg-surface file:bg-muted-surface file:text-foreground w-full rounded-lg border px-3 py-2 text-sm file:me-3 file:rounded-md file:border-0 file:px-3 file:py-1.5 file:text-sm"
+            className="border-line bg-raised text-ink file:bg-accent-wash file:text-accent hover:border-line-strong w-full rounded-lg border px-3.5 py-2.5 text-sm transition-colors file:me-3 file:rounded-md file:border-0 file:px-3 file:py-1.5 file:text-sm file:font-medium"
           />
-          <p className="text-muted text-xs leading-5">{t("hint", { limit: MAX_UPLOAD_MB })}</p>
+          <p className="text-subtle text-xs leading-5">{t("hint", { limit: MAX_UPLOAD_MB })}</p>
         </div>
 
-        <SelectField label={enums("photo")} name="file_type" defaultValue="photo">
+        <SelectField label={t("type")} name="file_type" defaultValue="photo">
           {FILE_TYPES.map((value) => (
             <option key={value} value={value}>
               {enums(value)}
@@ -52,7 +55,7 @@ export function AttachmentUpload({ injuryId }: { injuryId: string }) {
         </SelectField>
       </div>
 
-      <SubmitButton size="sm" pendingLabel={t("uploading")}>
+      <SubmitButton size="sm" variant="outline" pendingLabel={t("uploading")}>
         {t("upload")}
       </SubmitButton>
     </form>

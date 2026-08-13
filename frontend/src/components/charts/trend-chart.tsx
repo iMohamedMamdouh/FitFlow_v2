@@ -9,22 +9,24 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
-import { formatDate, formatNumber } from "@/lib/format";
+import { directionOf, type Locale } from "@/i18n/config";
+import { formatAxisDate, formatDate, formatNumber } from "@/lib/format";
 
 export type TrendPoint = { date: string; value: number };
 
 /**
- * منحنى زمني واحد (الخطوة 7.8).
+ * منحنى زمني واحد.
  *
- * ملاحظتان عن الاتجاه: المحور الأفقي `reversed` ليقرأ الزمن من اليمين
- * لليسار كبقية الواجهة، والمحور الرأسي على اليمين للسبب نفسه. Recharts
- * لا يقلب نفسه تلقائيًا مع `dir="rtl"`.
+ * Recharts لا يقلب نفسه مع `dir="rtl"`، فالاتجاه يُحسب من اللغة النشطة:
+ * في العربية يُقرأ الزمن من اليمين لليسار ويقف المحور الرأسي يمينًا،
+ * وفي الإنجليزية العكس. ربطه باللغة لا بقيمة ثابتة هو ما يجعل التبديل
+ * بين اللغتين صحيحًا بلا نسختين من المكوّن.
  */
 export function TrendChart({
   points,
-  color = "var(--color-primary)",
+  color = "var(--color-accent)",
   fractionDigits = 1,
   domain,
   unit,
@@ -36,44 +38,53 @@ export function TrendChart({
   unit?: string;
 }) {
   const t = useTranslations("dashboard");
+  const locale = useLocale() as Locale;
+  const rtl = directionOf(locale) === "rtl";
 
   if (points.length < 2) {
-    return <p className="text-muted py-8 text-center text-sm">{t("notEnoughData")}</p>;
+    return (
+      <div className="border-line text-subtle flex h-56 items-center justify-center rounded-lg border border-dashed text-sm">
+        {t("notEnoughData")}
+      </div>
+    );
   }
 
   return (
     <div className="h-56 w-full" dir="ltr">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={[...points]} margin={{ top: 8, right: 8, bottom: 4, left: 8 }}>
-          <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid stroke="var(--color-line)" strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="date"
-            reversed
-            tickFormatter={(value: string) => formatDate(value)}
-            tick={{ fill: "var(--color-muted)", fontSize: 11 }}
-            stroke="var(--color-border)"
-            minTickGap={24}
+            reversed={rtl}
+            tickFormatter={(value: string) => formatAxisDate(locale, value)}
+            tick={{ fill: "var(--color-faint)", fontSize: 11 }}
+            stroke="var(--color-line)"
+            tickLine={false}
+            minTickGap={28}
           />
           <YAxis
-            orientation="right"
+            orientation={rtl ? "right" : "left"}
             domain={domain ?? ["auto", "auto"]}
-            tickFormatter={(value: number) => formatNumber(value, fractionDigits)}
-            tick={{ fill: "var(--color-muted)", fontSize: 11 }}
-            stroke="var(--color-border)"
+            tickFormatter={(value: number) => formatNumber(locale, value, fractionDigits)}
+            tick={{ fill: "var(--color-faint)", fontSize: 11 }}
+            stroke="var(--color-line)"
+            tickLine={false}
             width={44}
           />
           <Tooltip
-            labelFormatter={(value) => formatDate(String(value))}
+            labelFormatter={(value) => formatDate(locale, String(value))}
             formatter={(value) => [
-              `${formatNumber(Number(value), fractionDigits)}${unit ? ` ${unit}` : ""}`,
+              `${formatNumber(locale, Number(value), fractionDigits)}${unit ? ` ${unit}` : ""}`,
               "",
             ]}
             contentStyle={{
               background: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
+              border: "1px solid var(--color-line)",
               borderRadius: "0.5rem",
-              direction: "rtl",
+              direction: rtl ? "rtl" : "ltr",
               fontSize: "0.8rem",
+              color: "var(--color-ink)",
             }}
           />
           <Line
@@ -81,7 +92,7 @@ export function TrendChart({
             dataKey="value"
             stroke={color}
             strokeWidth={2}
-            dot={{ r: 2 }}
+            dot={{ r: 2, fill: color }}
             activeDot={{ r: 4 }}
             isAnimationActive={false}
           />
