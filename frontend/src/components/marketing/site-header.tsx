@@ -6,6 +6,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonStyles } from "@/components/ui/button";
 import { Link } from "@/components/ui/nav-link";
 import type { Locale, Theme } from "@/i18n/config";
+import { getVisitor } from "@/lib/api/queries";
+import { homeForRole, workspaceKey } from "@/lib/auth/roles";
 
 const SECTIONS = [
   { href: "#how", key: "how" },
@@ -24,11 +26,19 @@ const SECTIONS = [
  *
  * الكتلة الداكنة تحلّ مشكلة أخرى: الصفحة الخارجية فاتحة وطباشيرية، فبقاء
  * الشريط بلونها كان يجعل حدّه السفلي هو الشيء الوحيد الذي يعرّفه.
+ *
+ * الشريط يعرف الجلسة: الزائر يرى دعوتين للدخول، والمسجَّل يرى اسمه وزرًا
+ * يفتح مساحته. الوجهة والتسمية يشتقّان من الدور، فالصفحة الخارجية تصلح
+ * بابًا للجميع بلا نسخة لكل دور.
  */
 export async function SiteHeader({ locale, theme }: { locale: Locale; theme: Theme }) {
-  const t = await getTranslations("landing.nav");
-  const auth = await getTranslations("auth");
-  const app = await getTranslations("app");
+  const [t, auth, app, translate, visitor] = await Promise.all([
+    getTranslations("landing.nav"),
+    getTranslations("auth"),
+    getTranslations("app"),
+    getTranslations(),
+    getVisitor(),
+  ]);
 
   return (
     <header className="slab-shadow sticky top-0 z-40 px-2 pt-3 pb-2 sm:px-3">
@@ -51,28 +61,44 @@ export async function SiteHeader({ locale, theme }: { locale: Locale; theme: The
           ))}
         </nav>
 
-        {/* زر التسجيل يختفي تحت `sm`: الخمسة عناصر معًا تتجاوز عرض 390px
-            فتُدفع خارج الشاشة ويظهر تمرير أفقي. البديل حاضر في نفس الشاشة
-            — النداء الرئيسي في البطل تحته مباشرة. */}
         <div className="ms-auto flex items-center gap-1.5 sm:gap-2 md:ms-0">
           <LocaleSwitcher current={locale} />
           <ThemeToggle initial={theme} />
-          <Link href="/login" className={buttonStyles({ variant: "ghost", size: "sm" })}>
-            {auth("login")}
-          </Link>
-          <Link
-            href="/register"
-            className={buttonStyles({
-              variant: "signal",
-              size: "sm",
-              // `max-sm:hidden` لا `hidden sm:inline-flex`: الأخيرة تتصادم
-              // مع `inline-flex` في أساس الزر، وترتيب الملف الناتج هو ما
-              // يحسم التصادم لا ترتيب الفئات هنا.
-              className: "max-sm:hidden",
-            })}
-          >
-            {auth("register")}
-          </Link>
+
+          {visitor === null ? (
+            <>
+              <Link href="/login" className={buttonStyles({ variant: "ghost", size: "sm" })}>
+                {auth("login")}
+              </Link>
+              {/* زر التسجيل يختفي تحت `sm`: الخمسة عناصر معًا تتجاوز عرض
+                  390px فتُدفع خارج الشاشة ويظهر تمرير أفقي. البديل حاضر في
+                  نفس الشاشة — النداء الرئيسي في البطل تحته مباشرة.
+
+                  `max-sm:hidden` لا `hidden sm:inline-flex`: الأخيرة تتصادم
+                  مع `inline-flex` في أساس الزر، وترتيب الملف الناتج هو ما
+                  يحسم التصادم لا ترتيب الفئات هنا. */}
+              <Link
+                href="/register"
+                className={buttonStyles({
+                  variant: "signal",
+                  size: "sm",
+                  className: "max-sm:hidden",
+                })}
+              >
+                {auth("register")}
+              </Link>
+            </>
+          ) : (
+            <>
+              <span className="me-1 hidden text-xs font-medium lg:block">{visitor.full_name}</span>
+              <Link
+                href={homeForRole(visitor.role)}
+                className={buttonStyles({ variant: "signal", size: "sm" })}
+              >
+                {translate(workspaceKey(visitor.role))}
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

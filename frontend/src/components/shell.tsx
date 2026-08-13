@@ -30,12 +30,10 @@ export type { NavLink };
 export async function Shell({
   user,
   links,
-  home,
   children,
 }: {
   user: UserPublic;
   links: readonly NavLink[];
-  home: string;
   children: React.ReactNode;
 }) {
   const nav = await getTranslations("nav");
@@ -49,7 +47,10 @@ export async function Shell({
     <div className="flex min-h-dvh flex-col">
       <header className="slab-shadow sticky top-0 z-40 px-2 pt-3 pb-2 sm:px-3">
         <div className="cut cut-lg bg-slab text-slab-ink mx-auto flex h-14 max-w-7xl items-center gap-2 ps-3 pe-1.5 sm:gap-3 sm:ps-5 sm:pe-2">
-          <Link href={home} className="shrink-0">
+          {/* الشعار يعود للصفحة الخارجية لا لأول رابط في القائمة:
+              الصفحة الخارجية هي واجهة المنصة، والوصول لبداية المساحة
+              مضمون أصلًا من أول عنصر في المسار الجانبي. */}
+          <Link href="/" className="shrink-0">
             <Wordmark name={app("name")} />
           </Link>
 

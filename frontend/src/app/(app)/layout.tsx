@@ -26,7 +26,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const links = LINKS.map((link) => ({ href: link.href, label: nav(link.key) }));
   return (
-    <Shell user={user} links={links} home="/dashboard">
+    <Shell user={user} links={links}>
       {children}
     </Shell>
   );

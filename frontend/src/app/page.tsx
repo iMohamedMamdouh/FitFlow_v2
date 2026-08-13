@@ -7,10 +7,17 @@ import { Badge } from "@/components/ui/alert";
 import { buttonStyles } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/card";
 import { Link } from "@/components/ui/nav-link";
+import { getVisitor } from "@/lib/api/queries";
+import { homeForRole, workspaceKey } from "@/lib/auth/roles";
 import { readLocale, readTheme } from "@/lib/preferences";
 
 /**
  * الصفحة الخارجية.
+ *
+ * الصفحة مفتوحة للجميع وهي واجهة المنصة: يراها الزائر والمسجَّل معًا.
+ * لذلك النداءان الرئيسيان يتبعان الجلسة — "ابدأ مجانًا" لمن لا حساب له،
+ * وزرّ يفتح مساحته لمن سجّل دخوله. عرض "أنشئ حسابًا" لمن هو داخل حسابه
+ * بالفعل دعوة إلى طريق مسدود.
  *
  * الصور كلها بدائل في `public/images/` — استبدل الملف بالاسم نفسه ولا
  * تحتاج تعديل أي كود. أبعادها مثبّتة في `<Image>` فلا تقفز الصفحة عند
@@ -22,9 +29,15 @@ const STEP_KEYS = ["step1", "step2", "step3", "step4"] as const;
 const FAQ_KEYS = ["1", "2", "3", "4"] as const;
 
 export default async function LandingPage() {
-  const [locale, theme] = await Promise.all([readLocale(), readTheme()]);
+  const [locale, theme, visitor] = await Promise.all([readLocale(), readTheme(), getVisitor()]);
   const t = await getTranslations("landing");
   const consent = await getTranslations("consent");
+  const translate = await getTranslations();
+
+  const primary =
+    visitor === null
+      ? { href: "/register", label: t("hero.primary") }
+      : { href: homeForRole(visitor.role), label: translate(workspaceKey(visitor.role)) };
 
   return (
     <>
@@ -54,15 +67,20 @@ export default async function LandingPage() {
               <p className="text-subtle max-w-xl text-lg leading-9">{t("hero.body")}</p>
 
               <div className="flex flex-wrap items-center gap-3">
-                <Link href="/register" className={buttonStyles({ variant: "signal", size: "lg" })}>
-                  {t("hero.primary")}
+                <Link
+                  href={primary.href}
+                  className={buttonStyles({ variant: "signal", size: "lg" })}
+                >
+                  {primary.label}
                 </Link>
                 <a href="#how" className={buttonStyles({ variant: "outline", size: "lg" })}>
                   {t("hero.secondary")}
                 </a>
               </div>
 
-              <p className="text-faint text-xs">{t("hero.note")}</p>
+              {/* "لا يحتاج بطاقة ائتمان · التسجيل في دقيقتين" كلام موجّه
+                  لمن لم يسجّل بعد. */}
+              {visitor === null && <p className="text-faint text-xs">{t("hero.note")}</p>}
             </div>
 
             <div className="relative">
@@ -246,8 +264,8 @@ export default async function LandingPage() {
                 {t("cta.title")}
               </h2>
               <p className="max-w-xl text-base leading-8 opacity-85">{t("cta.body")}</p>
-              <Link href="/register" className={buttonStyles({ variant: "signal", size: "lg" })}>
-                {t("cta.button")}
+              <Link href={primary.href} className={buttonStyles({ variant: "signal", size: "lg" })}>
+                {visitor === null ? t("cta.button") : primary.label}
               </Link>
               <p className="text-xs opacity-70">{consent("shortNotice")}</p>
             </div>

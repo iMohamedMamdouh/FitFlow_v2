@@ -2,7 +2,9 @@ import "server-only";
 
 import { cache } from "react";
 
+import { ApiError } from "./errors";
 import { apiFetch, apiFetchOrNull } from "./server";
+import { hasSession } from "@/lib/auth/session";
 import type {
   DailyLogRead,
   InjuryRead,
@@ -24,6 +26,25 @@ import type {
 
 export const getCurrentUser = cache(async (): Promise<UserPublic> => {
   return apiFetch<UserPublic>("/users/me");
+});
+
+/**
+ * المستخدم الحالي أو `null` — للصفحات المفتوحة للجميع.
+ *
+ * الصفحة الخارجية يراها الزائر والمسجّل معًا، فغياب الجلسة ليس خطأ.
+ * وجود الكوكي وحده ليس دليلًا كافيًا: قد يكون منتهيًا أو مُبطلًا من
+ * جهاز آخر، فنسأل الـ API ونعامل 401 كزائر بدل أن نُسقط الصفحة على من
+ * لم يخطئ. وبلا كوكي أصلًا لا يُنادى الـ API — الزائر العابر أكثر من
+ * يفتح هذه الصفحة.
+ */
+export const getVisitor = cache(async (): Promise<UserPublic | null> => {
+  if (!(await hasSession())) return null;
+  try {
+    return await getCurrentUser();
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) return null;
+    throw error;
+  }
 });
 
 /** يرجّع `null` لو لم يُستكمل الملف بعد — وهي حالة طبيعية لا خطأ. */

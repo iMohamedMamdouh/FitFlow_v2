@@ -17,7 +17,7 @@ export default async function SpecialistLayout({ children }: { children: React.R
 
   const links = LINKS.map((link) => ({ href: link.href, label: nav(link.key) }));
   return (
-    <Shell user={user} links={links} home="/specialist">
+    <Shell user={user} links={links}>
       {children}
     </Shell>
   );
