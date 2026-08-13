@@ -19,9 +19,10 @@ import { readLocale, readTheme } from "@/lib/preferences";
  * وزرّ يفتح مساحته لمن سجّل دخوله. عرض "أنشئ حسابًا" لمن هو داخل حسابه
  * بالفعل دعوة إلى طريق مسدود.
  *
- * الصور كلها بدائل في `public/images/` — استبدل الملف بالاسم نفسه ولا
- * تحتاج تعديل أي كود. أبعادها مثبّتة في `<Image>` فلا تقفز الصفحة عند
- * التحميل مهما كانت الصورة البديلة.
+ * الصور في `public/images/` بأبعادها النهائية تمامًا (960×640 للبطل،
+ * 720×560 للأمان، 480×320 للمميزات). الأبعاد مثبّتة في `<Image>` أيضًا،
+ * فلا تقفز الصفحة أثناء التحميل. لاستبدال صورة: ضع ملفًا بالاسم نفسه
+ * وبالمقاس نفسه — أي نسبة مختلفة ستُمطّ.
  */
 
 const FEATURE_KEYS = ["item1", "item2", "item3", "item4", "item5", "item6"] as const;
@@ -90,7 +91,7 @@ export default async function LandingPage() {
                 className="bg-accent-wash border-line absolute inset-0 translate-x-3 translate-y-3 border rtl:-translate-x-3"
               />
               <Image
-                src="/images/hero.svg"
+                src="/images/img9.webp"
                 alt={t("hero.imageAlt")}
                 width={960}
                 height={640}
@@ -177,15 +178,17 @@ export default async function LandingPage() {
               ))}
             </div>
 
+            {/* صور توضيحية: `alt` فارغ عمدًا. النص المجاور يصف المميزات
+                بالفعل، وتكرار الوصف نفسه ثلاث مرات ضجيج على قارئ الشاشة. */}
             <div className="mt-10 grid gap-5 sm:grid-cols-3">
-              {["feature-nutrition", "feature-rehab", "feature-review"].map((name) => (
+              {["img7", "img3", "img1"].map((name) => (
                 <Image
                   key={name}
-                  src={`/images/${name}.svg`}
-                  alt={t("features.title")}
+                  src={`/images/${name}.webp`}
+                  alt=""
                   width={480}
                   height={320}
-                  className="border-line bg-surface w-full rounded-xs border p-2"
+                  className="border-line bg-surface w-full rounded-xs border"
                 />
               ))}
             </div>
@@ -218,11 +221,11 @@ export default async function LandingPage() {
             </div>
 
             <Image
-              src="/images/safety.svg"
+              src="/images/img5.webp"
               alt={t("safety.imageAlt")}
               width={720}
               height={560}
-              className="border-line bg-raised w-full rounded-xs border p-2"
+              className="border-line bg-surface w-full rounded-xs border"
             />
           </div>
         </section>
