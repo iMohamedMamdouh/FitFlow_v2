@@ -84,6 +84,13 @@ migrate-test: require-compose ## اختبار الـ migrations: upgrade → dow
 seed: require-compose ## إنشاء أول حساب مدير
 	$(COMPOSE) exec backend python -m app.cli.seed
 
+.PHONY: demo-review
+demo-review: ## [تطوير محلي] محاكاة اعتماد الأخصائي لخطة مريض — make demo-review email=..
+ifndef email
+	$(error استخدم: make demo-review email=patient@example.com)
+endif
+	cd $(BACKEND) && .venv/bin/python -m app.cli.demo_review "$(email)"
+
 .PHONY: openapi
 openapi: ## تصدير مواصفة OpenAPI وتوليد أنواع الواجهة منها
 	cd $(BACKEND) && .venv/bin/python -m app.cli.export_openapi openapi.json
