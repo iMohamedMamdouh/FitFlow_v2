@@ -29,9 +29,6 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 
-# ---- Generated API types (produced in CI from OpenAPI) ----
-frontend/src/lib/api/generated.ts
-
 # ---- Editors / OS ----
 .vscode/
 .idea/
@@ -40,7 +37,7 @@ Thumbs.db
 
 # ---- Local data ----
 /data/
+# مرفقات طبية مرفوعة محليًا — لا ترفع بيانات مرضى للريبو أبدًا
+var/
 *.log
 
-# ---- Generated API contract (produced in CI) ----
-backend/openapi.json

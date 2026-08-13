@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+
+import { LOCALE, TIME_ZONE } from "@/i18n/request";
 import "./globals.css";
 
-// الخط العربي الأساسي للمنصة. متغير CSS عشان Tailwind يستخدمه.
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   variable: "--font-cairo",
@@ -20,21 +23,21 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b1120" },
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
   ],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // ar + rtl مثبّتان من المستوى الجذري (قرار ADR-004).
+  const messages = await getMessages();
+
   return (
-    <html lang="ar" dir="rtl" className={cairo.variable}>
+    <html lang={LOCALE} dir="rtl" className={cairo.variable}>
       <body className="bg-background text-foreground min-h-dvh font-sans antialiased">
-        {children}
+        <NextIntlClientProvider locale={LOCALE} timeZone={TIME_ZONE} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

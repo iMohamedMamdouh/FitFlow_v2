@@ -10,20 +10,31 @@ from __future__ import annotations
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record_audit
 from app.core.db import get_session
 from app.core.deps import CurrentUser
-from app.core.enums import Allergen, PlanStatus
+from app.core.enums import Allergen, AttachmentType, PlanStatus
 from app.models.audit import AuditAction
 from app.models.catalog import InjuryType
-from app.models.clinical import DailyLog, Injury, PhysiologicalReading
+from app.models.clinical import DailyLog, Injury, InjuryAttachment, PhysiologicalReading
 from app.models.plan import Plan
 from app.models.profile import FoodAllergy, UserProfile
 from app.schemas.clinical import (
+    AttachmentRead,
     DailyLogCreate,
     DailyLogRead,
     InjuryCreate,
@@ -34,6 +45,11 @@ from app.schemas.clinical import (
     ReadingRead,
 )
 from app.schemas.plan import PlanSummary
+from app.services.storage import (
+    AttachmentRejected,
+    default_attachment_type,
+    get_storage,
+)
 
 router = APIRouter(prefix="/me", tags=["me"])
 
@@ -197,6 +213,128 @@ async def record_my_injury(
     return injury
 
 
+async def _own_injury(session: AsyncSession, user_id: uuid.UUID, injury_id: uuid.UUID) -> Injury:
+    """يجلب إصابة يملكها المستخدم الحالي، أو يرفع 404.
+
+    نفس السياسة المتبعة في بقية النظام: إصابة غير موجودة وإصابة تخص
+    مريضًا آخر تعطيان الرد نفسه، فلا يكشف الفرق أي المعرّفات حقيقي.
+    """
+    injury = await session.get(Injury, injury_id)
+    if injury is None or injury.user_id != user_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="الإصابة غير موجودة")
+    return injury
+
+
+@router.get("/injuries/{injury_id}/attachments", response_model=list[AttachmentRead])
+async def list_my_injury_attachments(
+    injury_id: uuid.UUID,
+    user: CurrentUser,
+    session: Session,
+) -> list[InjuryAttachment]:
+    await _own_injury(session, user.id, injury_id)
+    result = await session.scalars(
+        select(InjuryAttachment)
+        .where(InjuryAttachment.injury_id == injury_id)
+        .order_by(InjuryAttachment.created_at)
+    )
+    return list(result)
+
+
+@router.post(
+    "/injuries/{injury_id}/attachments",
+    response_model=AttachmentRead,
+    status_code=status.HTTP_201_CREATED,
+)
+async def upload_my_injury_attachment(
+    injury_id: uuid.UUID,
+    request: Request,
+    user: CurrentUser,
+    session: Session,
+    file: Annotated[UploadFile, File(description="صورة أشعة أو تقرير طبي")],
+    file_type: Annotated[AttachmentType | None, Form()] = None,
+) -> InjuryAttachment:
+    """رفع مرفق طبي على إصابة يملكها المستخدم.
+
+    القراءة تتم بحد أقصى مقروء من الإعدادات: ``await file.read()`` بلا حد
+    يحمّل ملفًا بأي حجم إلى الذاكرة قبل أي فحص.
+    """
+    injury = await _own_injury(session, user.id, injury_id)
+    storage = get_storage()
+
+    # نقرأ بايتًا زائدًا واحدًا: وجوده يعني أن الملف أكبر من الحد، بلا
+    # حاجة لتحميل الباقي.
+    data = await file.read(storage.max_bytes + 1)
+    try:
+        storage_key, content_type = storage.save(data, injury_id=injury.id)
+    except AttachmentRejected as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
+        ) from exc
+
+    attachment = InjuryAttachment(
+        injury_id=injury.id,
+        storage_key=storage_key,
+        file_type=file_type or default_attachment_type(content_type),
+        content_type=content_type,
+        size_bytes=len(data),
+        uploaded_by=user.id,
+    )
+    session.add(attachment)
+    await session.flush()
+
+    await record_audit(
+        session,
+        action=AuditAction.INJURY_ATTACHMENT_UPLOADED,
+        entity_type="injury_attachment",
+        entity_id=attachment.id,
+        actor_user_id=user.id,
+        after={"content_type": content_type, "size_bytes": attachment.size_bytes},
+        request=request,
+    )
+    try:
+        await session.commit()
+    except Exception:
+        # الملف كُتب على القرص قبل الحفظ. لو فشل الحفظ نحذفه، وإلا تراكمت
+        # ملفات يتيمة لا يشير إليها أي صف.
+        storage.delete(storage_key)
+        raise
+    await session.refresh(attachment)
+    return attachment
+
+
+@router.get("/injuries/{injury_id}/attachments/{attachment_id}/content")
+async def download_my_injury_attachment(
+    injury_id: uuid.UUID,
+    attachment_id: uuid.UUID,
+    user: CurrentUser,
+    session: Session,
+) -> Response:
+    """تنزيل محتوى المرفق.
+
+    ``Content-Disposition: attachment`` مقصود: عرض ملف رفعه مستخدم داخل
+    نطاق التطبيق يجعل أي ثغرة في كشف النوع ثغرة XSS مخزَّنة.
+    """
+    await _own_injury(session, user.id, injury_id)
+    attachment = await session.get(InjuryAttachment, attachment_id)
+    if attachment is None or attachment.injury_id != injury_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="المرفق غير موجود")
+
+    try:
+        data = get_storage().read(attachment.storage_key)
+    except AttachmentRejected as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+    return Response(
+        content=data,
+        media_type=attachment.content_type,
+        headers={
+            "Content-Disposition": f'attachment; filename="{attachment.id}"',
+            "Cache-Control": "private, no-store",
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 # ---------------------------------------------------------------- القياسات
 @router.get("/readings", response_model=list[ReadingRead])
 async def list_my_readings(
@@ -240,6 +378,21 @@ async def record_my_reading(
 
 
 # ------------------------------------------------------------ التسجيل اليومي
+@router.get("/logs", response_model=list[DailyLogRead])
+async def list_my_daily_logs(
+    user: CurrentUser,
+    session: Session,
+    limit: int = 90,
+) -> list[DailyLog]:
+    result = await session.scalars(
+        select(DailyLog)
+        .where(DailyLog.user_id == user.id)
+        .order_by(DailyLog.log_date.desc())
+        .limit(min(max(limit, 1), 365))
+    )
+    return list(result)
+
+
 @router.post("/logs", response_model=DailyLogRead, status_code=status.HTTP_201_CREATED)
 async def record_my_daily_log(
     payload: DailyLogCreate,

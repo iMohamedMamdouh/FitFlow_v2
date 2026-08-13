@@ -1,0 +1,101 @@
+import type { components } from "./generated";
+
+/**
+ * أسماء مختصرة للأنواع المولَّدة من مواصفة OpenAPI.
+ *
+ * الملف `generated.ts` يُولَّد آليًا (`npm run gen:api`) ولا يُعدَّل يدويًا،
+ * ومساراته الطويلة (`components["schemas"][...]`) تجعل الكود غير مقروء.
+ * هذا الملف هو نقطة الاستيراد الوحيدة لبقية الواجهة: لو تغيّر شكل التوليد
+ * يتغيّر ملف واحد.
+ *
+ * ملاحظة مهمة: كل الحقول العشرية (وزن، طول، سعرات ماكرو) تصل **كنص** لأن
+ * الخادم يرسل `Decimal` كسلسلة. لا تعاملها كأرقام قبل تمريرها على
+ * `toNumber` في `@/lib/format`.
+ */
+
+type Schemas = components["schemas"];
+
+export type ActivityLevel = Schemas["ActivityLevel"];
+export type Allergen = Schemas["Allergen"];
+export type AttachmentRead = Schemas["AttachmentRead"];
+export type BodyRegion = Schemas["InjuryTypeRead"]["body_region"];
+export type BodySide = Schemas["BodySide"];
+export type DailyLogCreate = Schemas["DailyLogCreate"];
+export type DailyLogRead = Schemas["DailyLogRead"];
+export type Gender = Schemas["Gender"];
+export type Goal = Schemas["Goal"];
+export type InjuryCreate = Schemas["InjuryCreate"];
+export type InjuryRead = Schemas["InjuryRead"];
+export type InjuryStatus = Schemas["InjuryStatus"];
+export type InjuryTypeRead = Schemas["InjuryTypeRead"];
+export type MealRead = Schemas["MealRead"];
+export type MealSlot = Schemas["MealSlot"];
+export type PlanRead = Schemas["PlanRead"];
+export type PlanStatus = Schemas["PlanStatus"];
+export type PlanSummary = Schemas["PlanSummary"];
+export type PlanTransitionRead = Schemas["PlanTransitionRead"];
+export type PlanType = Schemas["PlanType"];
+export type ProfileRead = Schemas["ProfileRead"];
+export type ProfileUpsert = Schemas["ProfileUpsert"];
+export type ReadingCreate = Schemas["ReadingCreate"];
+export type ReadingRead = Schemas["ReadingRead"];
+export type TokenPair = Schemas["TokenPair"];
+export type UserPublic = Schemas["UserPublic"];
+export type UserRole = Schemas["UserRole"];
+
+/** الحالات التي يُسمح للمريض برؤيتها — مطابقة لـ `PlanStatus.is_visible_to_patient`. */
+export const PATIENT_VISIBLE_STATUSES = [
+  "approved",
+  "active",
+  "archived",
+] as const satisfies readonly PlanStatus[];
+
+export const ACTIVITY_LEVELS = [
+  "sedentary",
+  "light",
+  "moderate",
+  "active",
+  "very_active",
+] as const satisfies readonly ActivityLevel[];
+
+export const GOALS = [
+  "weight_loss",
+  "muscle_gain",
+  "maintenance",
+  "rehabilitation",
+] as const satisfies readonly Goal[];
+
+export const GENDERS = ["male", "female"] as const satisfies readonly Gender[];
+
+export const ALLERGENS = [
+  "gluten",
+  "dairy",
+  "eggs",
+  "peanuts",
+  "tree_nuts",
+  "soy",
+  "fish",
+  "shellfish",
+  "sesame",
+] as const satisfies readonly Allergen[];
+
+export const INJURY_STATUSES = [
+  "acute",
+  "subacute",
+  "chronic",
+  "recovered",
+] as const satisfies readonly InjuryStatus[];
+
+export const BODY_SIDES = [
+  "not_applicable",
+  "left",
+  "right",
+  "bilateral",
+] as const satisfies readonly BodySide[];
+
+export const MEAL_ORDER = [
+  "breakfast",
+  "lunch",
+  "dinner",
+  "snack",
+] as const satisfies readonly MealSlot[];

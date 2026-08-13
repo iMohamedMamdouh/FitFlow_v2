@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from app.core.enums import (
     ActivityLevel,
     Allergen,
+    AttachmentType,
     BodySide,
     Gender,
     Goal,
@@ -111,6 +112,23 @@ class InjuryCreate(BaseModel):
         return self
 
 
+class AttachmentRead(BaseModel):
+    """وصف مرفق طبي — بلا ``storage_key``.
+
+    مفتاح التخزين تفصيلة داخلية؛ تسريبه للواجهة يحوّل أي خطأ لاحق في
+    التحقق من الصلاحية إلى وصول مباشر للملف.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    injury_id: uuid.UUID
+    file_type: AttachmentType
+    content_type: str
+    size_bytes: int
+    created_at: datetime
+
+
 class InjuryRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -191,6 +209,7 @@ class DailyLogRead(BaseModel):
 
 
 __all__ = [
+    "AttachmentRead",
     "DailyLogCreate",
     "DailyLogRead",
     "InjuryCreate",

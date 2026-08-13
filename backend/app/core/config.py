@@ -56,6 +56,13 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 14
     cors_origins: str = "http://localhost:3000"
 
+    # ---- المرفقات الطبية ----
+    # مسار نسبي يُحلّ من مجلد `backend/` لا من مجلد التشغيل ولا من جذر
+    # الريبو: داخل الحاوية لا يوجد جذر ريبو أصلًا (التطبيق في /app وحده)،
+    # فالحل من مجلد التطبيق هو الوحيد الذي يعطي المسار نفسه في الحالتين.
+    upload_dir: str = "var/uploads"
+    max_upload_mb: int = 10
+
     # ---- أول حساب مدير (يستخدمه سكربت التهيئة فقط) ----
     first_admin_email: str = "admin@example.com"
     first_admin_password: SecretStr = SecretStr("ChangeMe_Admin_2026!")
@@ -68,6 +75,15 @@ class Settings(BaseSettings):
             raise ValueError("SECRET_KEY لازم يكون 32 حرف على الأقل")
         return value
 
+    @field_validator("max_upload_mb")
+    @classmethod
+    def _upload_limit_fits_the_column(cls, value: int) -> int:
+        # قاعدة البيانات ترفض أي مرفق فوق 50 ميجابايت. حد تطبيقي أعلى منها
+        # يعني رفعًا ينجح ثم يفشل عند الحفظ بخطأ قاعدة بيانات لا معنى له.
+        if not 1 <= value <= 50:
+            raise ValueError("MAX_UPLOAD_MB لازم يكون بين 1 و 50")
+        return value
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def database_url(self) -> str:
@@ -77,6 +93,16 @@ class Settings(BaseSettings):
             f"postgresql+asyncpg://{self.postgres_user}:{password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def upload_path(self) -> Path:
+        """مجلد المرفقات، مطلقًا دائمًا ومُنشأ عند أول استخدام."""
+        path = Path(self.upload_dir)
+        if not path.is_absolute():
+            path = _BACKEND_DIR / path
+        path.mkdir(parents=True, exist_ok=True)
+        return path
 
     @computed_field  # type: ignore[prop-decorator]
     @property

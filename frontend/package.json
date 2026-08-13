@@ -13,9 +13,14 @@
     "gen:api": "openapi-typescript ../backend/openapi.json -o src/lib/api/generated.ts"
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "next": "16.3.0",
+    "next-intl": "^4.13.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

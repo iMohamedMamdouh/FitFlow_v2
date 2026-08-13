@@ -36,6 +36,7 @@ class AuditAction(enum.StrEnum):
     PROFILE_UPDATED = "profile.updated"
     CONSENT_ACCEPTED = "profile.consent_accepted"
     INJURY_RECORDED = "injury.recorded"
+    INJURY_ATTACHMENT_UPLOADED = "injury.attachment_uploaded"
 
     PLAN_GENERATED = "plan.generated"
     PLAN_SUBMITTED_FOR_REVIEW = "plan.submitted_for_review"

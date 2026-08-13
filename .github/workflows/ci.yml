@@ -85,23 +85,21 @@ jobs:
       - name: Tests
         run: .venv/bin/python -m pytest
 
-      - name: Export the OpenAPI schema
-        run: .venv/bin/python -m app.cli.export_openapi openapi.json
-
-      - name: Upload the schema for the frontend job
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi-schema
-          path: backend/openapi.json
-          retention-days: 1
+      # المواصفة والأنواع المولَّدة منها **محفوظتان في الريبو**: بدونهما لا
+      # تُبنى الواجهة في نسخة جديدة ولا في صورة Docker (سياقها مجلد
+      # frontend وحده). الفحص هنا يمنع الثمن المعتاد لذلك — أن تتقادم
+      # النسخة المحفوظة بصمت — بأن يفشل البناء لو اختلفت عن المولَّدة.
+      - name: The committed OpenAPI schema is current
+        run: |
+          .venv/bin/python -m app.cli.export_openapi openapi.json
+          git diff --exit-code openapi.json \
+            || { echo "::error::openapi.json قديم — شغّل: make openapi"; exit 1; }
 
   frontend:
     name: Frontend — lint, types, build
     runs-on: ubuntu-latest
-    # ينتظر الباك اند ليأخذ منه المواصفة: أنواع الواجهة تُولَّد من العقد
-    # نفسه، فيصبح تغيير حقل في المخطط كسرًا فوريًا لبناء الواجهة بدل خطأ
-    # يظهر وقت التشغيل عند مستخدم.
-    needs: backend
+    # مستقلة عن وظيفة الباك اند: كل واحدة تتحقق من نصفها من العقد
+    # المحفوظ في الريبو، فتعملان بالتوازي بدل الانتظار.
     defaults:
       run:
         working-directory: frontend
@@ -115,17 +113,14 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Download the OpenAPI schema
-        uses: actions/download-artifact@v4
-        with:
-          name: openapi-schema
-          path: backend
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate the API types from the schema
-        run: npm run gen:api
+      - name: The committed API types match the schema
+        run: |
+          npm run gen:api
+          git diff --exit-code src/lib/api/generated.ts \
+            || { echo "::error::الأنواع المولَّدة قديمة — شغّل: make openapi"; exit 1; }
 
       - name: Lint (eslint)
         run: npm run lint

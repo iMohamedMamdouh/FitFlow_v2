@@ -54,6 +54,9 @@ services:
       - ./backend/app:/app/app
       - ./backend/tests:/app/tests
       - ./backend/alembic:/app/alembic
+      # المرفقات الطبية تعيش في volume مسمّى لا داخل الحاوية: إعادة بناء
+      # الصورة تمسح نظام ملفاتها، ومعه ملفات أشعة مرضى.
+      - uploads:/app/var/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,6 +69,9 @@ services:
       target: development
     restart: unless-stopped
     environment:
+      # الواجهة تنادي الـ API من الخادم لا من المتصفح، فالعنوان هنا اسم
+      # الخدمة داخل الشبكة لا localhost.
+      API_URL: http://backend:8000
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
       WATCHPACK_POLLING: "true"
     ports:
@@ -73,9 +79,11 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
+      - ./frontend/messages:/app/messages
     depends_on:
       - backend
 
 volumes:
   postgres_data:
   redis_data:
+  uploads:

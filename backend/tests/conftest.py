@@ -19,6 +19,11 @@
 from __future__ import annotations
 
 import os
+import tempfile
+
+# المرفقات تُكتب على قرص حقيقي في الاختبارات — مجلد مؤقت لا مجلد المشروع،
+# حتى لا يترك تشغيل الاختبارات ملفات وراءه في شجرة العمل.
+_UPLOAD_DIR = tempfile.mkdtemp(prefix="fitflow-test-uploads-")
 
 _TEST_ENV = {
     "ENVIRONMENT": "local",
@@ -32,6 +37,7 @@ _TEST_ENV = {
     "REDIS_PORT": "6379",
     "SECRET_KEY": "test_secret_key_at_least_32_characters_long",
     "CORS_ORIGINS": "http://localhost:3000",
+    "UPLOAD_DIR": _UPLOAD_DIR,
 }
 
 for _key, _value in _TEST_ENV.items():

@@ -84,6 +84,16 @@ migrate-test: require-compose ## اختبار الـ migrations: upgrade → dow
 seed: require-compose ## إنشاء أول حساب مدير
 	$(COMPOSE) exec backend python -m app.cli.seed
 
+.PHONY: openapi
+openapi: ## تصدير مواصفة OpenAPI وتوليد أنواع الواجهة منها
+	cd $(BACKEND) && .venv/bin/python -m app.cli.export_openapi openapi.json
+	cd $(FRONTEND) && npm run gen:api
+	@echo "✓ العقد محدَّث — راجع الفرق قبل الـ commit"
+
+.PHONY: seed-catalog
+seed-catalog: require-compose ## تحميل قاعدة البداية (أطعمة + أنواع إصابات)
+	$(COMPOSE) exec backend python -m app.cli.seed_catalog
+
 .PHONY: ps
 ps: ## حالة الخدمات
 	$(COMPOSE) ps
@@ -118,6 +128,7 @@ check: lint typecheck test ## تشغيل كل الفحوصات (نفس ما تش
 dev-backend: ## تشغيل الباك اند مباشرة (migrations + seed + uvicorn)
 	cd $(BACKEND) && .venv/bin/alembic upgrade head
 	cd $(BACKEND) && .venv/bin/python -m app.cli.seed
+	cd $(BACKEND) && .venv/bin/python -m app.cli.seed_catalog
 	cd $(BACKEND) && .venv/bin/uvicorn app.main:app --reload --port 8000
 
 .PHONY: dev-frontend

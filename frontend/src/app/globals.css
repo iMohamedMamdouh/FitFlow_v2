@@ -1,28 +1,90 @@
 @import "tailwindcss";
 
+/*
+  لوحة ألوان واحدة معرَّفة كمتغيّرات، لا ألوان مكتوبة داخل المكوّنات.
+  التصميم عربي RTL من الجذر (ADR-004): كل تباعد اتجاهي في الواجهة يستخدم
+  الخصائص المنطقية (ms/me/ps/pe) لا اليمين واليسار، فلا شيء ينقلب لو
+  أُضيفت لغة يسار-يمين لاحقًا.
+*/
 :root {
-  --background: #ffffff;
+  --background: #f8fafc;
+  --surface: #ffffff;
   --foreground: #0f172a;
   --muted: #64748b;
+  --muted-surface: #f1f5f9;
   --border: #e2e8f0;
   --primary: #0d9488;
+  --primary-strong: #0f766e;
+  --primary-foreground: #ffffff;
+  --primary-soft: #ccfbf1;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --success: #15803d;
+  --success-soft: #dcfce7;
+  --info: #1d4ed8;
+  --info-soft: #dbeafe;
+  --ring: #14b8a6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0b1120;
+    --background: #020617;
+    --surface: #0f172a;
     --foreground: #e2e8f0;
     --muted: #94a3b8;
+    --muted-surface: #1e293b;
     --border: #1e293b;
     --primary: #2dd4bf;
+    --primary-strong: #5eead4;
+    --primary-foreground: #042f2e;
+    --primary-soft: #134e4a;
+    --danger: #f87171;
+    --danger-soft: #450a0a;
+    --warning: #fbbf24;
+    --warning-soft: #451a03;
+    --success: #4ade80;
+    --success-soft: #052e16;
+    --info: #93c5fd;
+    --info-soft: #172554;
+    --ring: #2dd4bf;
   }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-muted-surface: var(--muted-surface);
   --color-border: var(--border);
   --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-ring: var(--ring);
   --font-sans: var(--font-cairo), system-ui, sans-serif;
+}
+
+/* الأرقام العربية-الهندية تُقرأ بصعوبة في الجداول الغذائية، فنُبقي
+   الأرقام اللاتينية مع النص العربي — وهو أيضًا ما يفعله معظم التطبيقات
+   الطبية العربية. */
+body {
+  font-feature-settings: "lnum" 1;
+}
+
+/* حلقة تركيز واحدة لكل عناصر الإدخال — الاعتماد على الافتراضي يختلف بين
+   المتصفحات ويختفي أحيانًا تمامًا. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
