@@ -16,6 +16,7 @@ import type { components } from "./generated";
 type Schemas = components["schemas"];
 
 export type ActivityLevel = Schemas["ActivityLevel"];
+export type AdminUserRow = Schemas["AdminUserRow"];
 export type AuditEntryRead = Schemas["AuditEntryRead"];
 export type Allergen = Schemas["Allergen"];
 export type AttachmentRead = Schemas["AttachmentRead"];
@@ -38,6 +39,7 @@ export type PlanTransitionRead = Schemas["PlanTransitionRead"];
 export type PatientFlag = Schemas["PatientFlag"];
 export type PatientSummary = Schemas["PatientSummary"];
 export type PlanType = Schemas["PlanType"];
+export type PlatformStats = Schemas["PlatformStats"];
 export type ProfileRead = Schemas["ProfileRead"];
 export type ProfileUpsert = Schemas["ProfileUpsert"];
 export type ReadingCreate = Schemas["ReadingCreate"];
@@ -53,6 +55,8 @@ export const PATIENT_VISIBLE_STATUSES = [
   "active",
   "archived",
 ] as const satisfies readonly PlanStatus[];
+
+export const USER_ROLES = ["patient", "specialist", "admin"] as const satisfies readonly UserRole[];
 
 export const ACTIVITY_LEVELS = [
   "sedentary",

@@ -4,6 +4,70 @@
  */
 
 export interface paths {
+    "/api/v1/admin/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assign Patient
+         * @description إسناد مريض إلى أخصائي.
+         *
+         *     الإسناد المنتهي يُعاد تفعيله بدل إنشاء صف ثانٍ: المفتاح الأساسي مركّب
+         *     من الطرفين، وصفّ ثانٍ مستحيل أصلًا — لكن الأهم أن عودة مريض إلى
+         *     أخصائيه السابق حدث شائع، ومعالجتها كخطأ تجعل الشاشة تكذب.
+         */
+        post: operations["assign_patient_api_v1_admin_assignments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/assignments/{specialist_id}/{patient_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Unassign Patient
+         * @description إنهاء الإسناد.
+         *
+         *     الصف يبقى بـ ``is_active=false`` وتاريخ انتهاء: من كان يتابع هذا
+         *     المريض ومتى سؤال سريري يُسأل لاحقًا، وحذف الصف يمحو إجابته.
+         */
+        delete: operations["unassign_patient_api_v1_admin_assignments__specialist_id___patient_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Platform Stats */
+        get: operations["platform_stats_api_v1_admin_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/users": {
         parameters: {
             query?: never;
@@ -20,6 +84,37 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update User
+         * @description تعديل اسم مستخدم أو دوره أو حالته.
+         *
+         *     حارسان لا يمكن تجاوزهما:
+         *
+         *     1. **المدير لا يعطّل نفسه ولا يخفّض دوره.** آخر مدير يفعل ذلك يُغلق
+         *        اللوحة على الجميع، ولا يوجد مسار عام لاستعادتها.
+         *     2. **الأخصائي ذو المرضى لا يُخفَّض دوره.** قاعدة البيانات ترفضه أصلًا
+         *        (مفتاح أجنبي مركّب على ``users(id, role)``)، لكنها ترفضه بخطأ سلامة
+         *        غامض؛ هنا يتحول إلى رسالة تقول ما يجب فعله: انقل مرضاه أولًا.
+         *
+         *     التعطيل ليس ضمن الحارس الثاني عمدًا: تعطيل حساب مخترَق فعل عاجل، وعدد
+         *     مرضاه ظاهر في نفس الشاشة فالقرار مبنيّ على معلومة لا على مفاجأة.
+         */
+        patch: operations["update_user_api_v1_admin_users__user_id__patch"];
         trace?: never;
     };
     "/api/v1/auth/login": {
@@ -639,6 +734,37 @@ export interface components {
          */
         ActivityLevel: "sedentary" | "light" | "moderate" | "active" | "very_active";
         /**
+         * AdminUserRow
+         * @description سطر واحد في قائمة المستخدمين.
+         *
+         *     الأعداد المرفقة تجيب السؤال الذي يسبق كل قرار في هذه الشاشة: تعطيل
+         *     أخصائي عنده مرضى مسنَدون ليس نفس تعطيل أخصائي بلا مرضى، وترقية مريض
+         *     له سجل سريري ليست نفس ترقية حساب فارغ.
+         */
+        AdminUserRow: {
+            /** Assigned Patients */
+            assigned_patients: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Email */
+            email: string;
+            /** Full Name */
+            full_name: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            role: components["schemas"]["UserRole"];
+            /** Specialists */
+            specialists: components["schemas"]["AssignedSpecialist"][];
+        };
+        /**
          * Allergen
          * @description مسبّبات الحساسية الشائعة.
          *
@@ -647,6 +773,38 @@ export interface components {
          * @enum {string}
          */
         Allergen: "gluten" | "dairy" | "eggs" | "peanuts" | "tree_nuts" | "soy" | "fish" | "shellfish" | "sesame";
+        /**
+         * AssignedSpecialist
+         * @description أخصائي مسنَد إلى مريض — بالمعرّف لا بالاسم وحده.
+         *
+         *     الاسم كافٍ للعرض وحده، لكن الشاشة تبني عليه أفعالًا (إنهاء الإسناد،
+         *     ترشيح من لم يُسنَد بعد)، والاسم قابل للتكرار بين أخصائيين.
+         */
+        AssignedSpecialist: {
+            /** Full Name */
+            full_name: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+        };
+        /**
+         * AssignmentRequest
+         * @description إسناد مريض إلى أخصائي.
+         */
+        AssignmentRequest: {
+            /**
+             * Patient Id
+             * Format: uuid
+             */
+            patient_id: string;
+            /**
+             * Specialist Id
+             * Format: uuid
+             */
+            specialist_id: string;
+        };
         /**
          * AttachmentRead
          * @description وصف مرفق طبي — بلا ``storage_key``.
@@ -1115,6 +1273,12 @@ export interface components {
          * @enum {string}
          */
         PlanStatus: "draft" | "pending_review" | "changes_requested" | "approved" | "active" | "archived";
+        /** PlanStatusCount */
+        PlanStatusCount: {
+            status: components["schemas"]["PlanStatus"];
+            /** Total */
+            total: number;
+        };
         /**
          * PlanSummary
          * @description تمثيل مختصر — يُستخدم في القوائم.
@@ -1161,6 +1325,40 @@ export interface components {
          * @enum {string}
          */
         PlanType: "rehab" | "nutrition" | "training" | "combined";
+        /**
+         * PlatformStats
+         * @description أرقام المنصة.
+         *
+         *     كلها من استعلامات مجمَّعة: العدّ في بايثون بعد جلب الصفوف يعني تحميل
+         *     كل مستخدم وكل خطة في الذاكرة لعرض ستة أرقام.
+         *
+         *     استهلاك الذكاء الاصطناعي وتكلفته (10.3) ينتظران المرحلة 6 — لا يوجد
+         *     مزوّد بعد، ورقم مختلَق في لوحة إدارة أسوأ من رقم غائب.
+         */
+        PlatformStats: {
+            /** Active Injuries */
+            active_injuries: number;
+            /** Acute Injuries */
+            acute_injuries: number;
+            /** Catalog Exercises */
+            catalog_exercises: number;
+            /** Catalog Foods */
+            catalog_foods: number;
+            /** Catalog Injury Types */
+            catalog_injury_types: number;
+            /** Catalog Unreviewed */
+            catalog_unreviewed: number;
+            /** Logs Last 7 Days */
+            logs_last_7_days: number;
+            /** Patients Without Specialist */
+            patients_without_specialist: number;
+            /** Plans */
+            plans: components["schemas"]["PlanStatusCount"][];
+            /** Plans Awaiting Review */
+            plans_awaiting_review: number;
+            /** Users */
+            users: components["schemas"]["RoleCount"][];
+        };
         /** ProfileRead */
         ProfileRead: {
             activity_level: components["schemas"]["ActivityLevel"];
@@ -1300,6 +1498,14 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** RoleCount */
+        RoleCount: {
+            /** Active */
+            active: number;
+            role: components["schemas"]["UserRole"];
+            /** Total */
+            total: number;
+        };
         /**
          * SpecialistNoteCreate
          * @description ملاحظة على مريض.
@@ -1393,6 +1599,24 @@ export interface components {
          * @enum {string}
          */
         UserRole: "patient" | "specialist" | "admin";
+        /**
+         * UserUpdateRequest
+         * @description تعديل مستخدم من لوحة المدير.
+         *
+         *     الحقول كلها اختيارية: الشاشة ترسل ما تغيّر فقط، فلا يُعاد إرسال الدور
+         *     مع كل تفعيل/تعطيل — وإرسال قيمة لم تتغيّر هو أكثر ما يُنتج تعديلات
+         *     عرضية في سجل التدقيق.
+         *
+         *     كلمة السر ليست هنا عمدًا: تغييرها فعل منفصل له مساره الخاص، ووضعه في
+         *     نفس الطلب يجعل تعديل اسم يحمل معه خطر إبطال جلسات المستخدم.
+         */
+        UserUpdateRequest: {
+            /** Full Name */
+            full_name?: string | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            role?: components["schemas"]["UserRole"] | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -1415,9 +1639,93 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    assign_patient_api_v1_admin_assignments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unassign_patient_api_v1_admin_assignments__specialist_id___patient_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                specialist_id: string;
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    platform_stats_api_v1_admin_stats_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlatformStats"];
+                };
+            };
+        };
+    };
     list_users_api_v1_admin_users_get: {
         parameters: {
             query?: {
+                role?: components["schemas"]["UserRole"] | null;
+                search?: string | null;
+                is_active?: boolean | null;
                 limit?: number;
                 offset?: number;
             };
@@ -1433,7 +1741,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserPublic"][];
+                    "application/json": components["schemas"]["AdminUserRow"][];
                 };
             };
             /** @description Validation Error */
@@ -1467,6 +1775,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserPublic"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_user_api_v1_admin_users__user_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserRow"];
                 };
             };
             /** @description Validation Error */

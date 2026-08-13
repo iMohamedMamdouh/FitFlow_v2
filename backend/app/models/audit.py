@@ -27,6 +27,9 @@ class AuditAction(enum.StrEnum):
 
     USER_REGISTERED = "user.registered"
     USER_CREATED_BY_ADMIN = "user.created_by_admin"
+    USER_UPDATED_BY_ADMIN = "user.updated_by_admin"
+    PATIENT_ASSIGNED = "care_team.patient_assigned"
+    PATIENT_UNASSIGNED = "care_team.patient_unassigned"
     LOGIN_SUCCEEDED = "auth.login_succeeded"
     LOGIN_FAILED = "auth.login_failed"
     LOGOUT = "auth.logout"

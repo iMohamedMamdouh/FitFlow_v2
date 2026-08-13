@@ -12,6 +12,59 @@
         "title": "ActivityLevel",
         "type": "string"
       },
+      "AdminUserRow": {
+        "description": "سطر واحد في قائمة المستخدمين.\n\nالأعداد المرفقة تجيب السؤال الذي يسبق كل قرار في هذه الشاشة: تعطيل\nأخصائي عنده مرضى مسنَدون ليس نفس تعطيل أخصائي بلا مرضى، وترقية مريض\nله سجل سريري ليست نفس ترقية حساب فارغ.",
+        "properties": {
+          "assigned_patients": {
+            "title": "Assigned Patients",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "specialists": {
+            "items": {
+              "$ref": "#/components/schemas/AssignedSpecialist"
+            },
+            "title": "Specialists",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role",
+          "is_active",
+          "created_at",
+          "assigned_patients",
+          "specialists"
+        ],
+        "title": "AdminUserRow",
+        "type": "object"
+      },
       "Allergen": {
         "description": "مسبّبات الحساسية الشائعة.\n\nنوع محدود لا نص حر: خطأ إملائي في اسم مسبّب حساسية يعني طعامًا خطرًا\nيمر من الفلتر بصمت.",
         "enum": [
@@ -27,6 +80,47 @@
         ],
         "title": "Allergen",
         "type": "string"
+      },
+      "AssignedSpecialist": {
+        "description": "أخصائي مسنَد إلى مريض — بالمعرّف لا بالاسم وحده.\n\nالاسم كافٍ للعرض وحده، لكن الشاشة تبني عليه أفعالًا (إنهاء الإسناد،\nترشيح من لم يُسنَد بعد)، والاسم قابل للتكرار بين أخصائيين.",
+        "properties": {
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "full_name"
+        ],
+        "title": "AssignedSpecialist",
+        "type": "object"
+      },
+      "AssignmentRequest": {
+        "description": "إسناد مريض إلى أخصائي.",
+        "properties": {
+          "patient_id": {
+            "format": "uuid",
+            "title": "Patient Id",
+            "type": "string"
+          },
+          "specialist_id": {
+            "format": "uuid",
+            "title": "Specialist Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "specialist_id",
+          "patient_id"
+        ],
+        "title": "AssignmentRequest",
+        "type": "object"
       },
       "AttachmentRead": {
         "description": "وصف مرفق طبي — بلا ``storage_key``.\n\nمفتاح التخزين تفصيلة داخلية؛ تسريبه للواجهة يحوّل أي خطأ لاحق في\nالتحقق من الصلاحية إلى وصول مباشر للملف.",
@@ -1144,6 +1238,23 @@
         "title": "PlanStatus",
         "type": "string"
       },
+      "PlanStatusCount": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/PlanStatus"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "status",
+          "total"
+        ],
+        "title": "PlanStatusCount",
+        "type": "object"
+      },
       "PlanSummary": {
         "description": "تمثيل مختصر — يُستخدم في القوائم.",
         "properties": {
@@ -1260,6 +1371,76 @@
         ],
         "title": "PlanType",
         "type": "string"
+      },
+      "PlatformStats": {
+        "description": "أرقام المنصة.\n\nكلها من استعلامات مجمَّعة: العدّ في بايثون بعد جلب الصفوف يعني تحميل\nكل مستخدم وكل خطة في الذاكرة لعرض ستة أرقام.\n\nاستهلاك الذكاء الاصطناعي وتكلفته (10.3) ينتظران المرحلة 6 — لا يوجد\nمزوّد بعد، ورقم مختلَق في لوحة إدارة أسوأ من رقم غائب.",
+        "properties": {
+          "active_injuries": {
+            "title": "Active Injuries",
+            "type": "integer"
+          },
+          "acute_injuries": {
+            "title": "Acute Injuries",
+            "type": "integer"
+          },
+          "catalog_exercises": {
+            "title": "Catalog Exercises",
+            "type": "integer"
+          },
+          "catalog_foods": {
+            "title": "Catalog Foods",
+            "type": "integer"
+          },
+          "catalog_injury_types": {
+            "title": "Catalog Injury Types",
+            "type": "integer"
+          },
+          "catalog_unreviewed": {
+            "title": "Catalog Unreviewed",
+            "type": "integer"
+          },
+          "logs_last_7_days": {
+            "title": "Logs Last 7 Days",
+            "type": "integer"
+          },
+          "patients_without_specialist": {
+            "title": "Patients Without Specialist",
+            "type": "integer"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanStatusCount"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "plans_awaiting_review": {
+            "title": "Plans Awaiting Review",
+            "type": "integer"
+          },
+          "users": {
+            "items": {
+              "$ref": "#/components/schemas/RoleCount"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "required": [
+          "users",
+          "plans",
+          "plans_awaiting_review",
+          "patients_without_specialist",
+          "active_injuries",
+          "acute_injuries",
+          "logs_last_7_days",
+          "catalog_foods",
+          "catalog_exercises",
+          "catalog_injury_types",
+          "catalog_unreviewed"
+        ],
+        "title": "PlatformStats",
+        "type": "object"
       },
       "ProfileRead": {
         "properties": {
@@ -1659,6 +1840,28 @@
         "title": "RegisterRequest",
         "type": "object"
       },
+      "RoleCount": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "role",
+          "total",
+          "active"
+        ],
+        "title": "RoleCount",
+        "type": "object"
+      },
       "SpecialistNoteCreate": {
         "description": "ملاحظة على مريض.\n\nالحقول في الجسم لا في الـ query string: ملاحظة سريرية قد تكون فقرة\nكاملة، ووضعها في الرابط يعني ظهورها في سجلات الخادم وفي تاريخ\nالمتصفح — وهي بيانات مريض.",
         "properties": {
@@ -1829,6 +2032,47 @@
         "title": "UserRole",
         "type": "string"
       },
+      "UserUpdateRequest": {
+        "description": "تعديل مستخدم من لوحة المدير.\n\nالحقول كلها اختيارية: الشاشة ترسل ما تغيّر فقط، فلا يُعاد إرسال الدور\nمع كل تفعيل/تعطيل — وإرسال قيمة لم تتغيّر هو أكثر ما يُنتج تعديلات\nعرضية في سجل التدقيق.\n\nكلمة السر ليست هنا عمدًا: تغييرها فعل منفصل له مساره الخاص، ووضعه في\nنفس الطلب يجعل تعديل اسم يحمل معه خطر إبطال جلسات المستخدم.",
+        "properties": {
+          "full_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "UserUpdateRequest",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -1884,10 +2128,177 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/assignments": {
+      "post": {
+        "description": "إسناد مريض إلى أخصائي.\n\nالإسناد المنتهي يُعاد تفعيله بدل إنشاء صف ثانٍ: المفتاح الأساسي مركّب\nمن الطرفين، وصفّ ثانٍ مستحيل أصلًا — لكن الأهم أن عودة مريض إلى\nأخصائيه السابق حدث شائع، ومعالجتها كخطأ تجعل الشاشة تكذب.",
+        "operationId": "assign_patient_api_v1_admin_assignments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Assign Patient",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/assignments/{specialist_id}/{patient_id}": {
+      "delete": {
+        "description": "إنهاء الإسناد.\n\nالصف يبقى بـ ``is_active=false`` وتاريخ انتهاء: من كان يتابع هذا\nالمريض ومتى سؤال سريري يُسأل لاحقًا، وحذف الصف يمحو إجابته.",
+        "operationId": "unassign_patient_api_v1_admin_assignments__specialist_id___patient_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "specialist_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Specialist Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "patient_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Patient Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Unassign Patient",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/stats": {
+      "get": {
+        "operationId": "platform_stats_api_v1_admin_stats_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformStats"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Platform Stats",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/api/v1/admin/users": {
       "get": {
         "operationId": "list_users_api_v1_admin_users_get",
         "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/UserRole"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Role"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          },
           {
             "in": "query",
             "name": "limit",
@@ -1915,7 +2326,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/UserPublic"
+                    "$ref": "#/components/schemas/AdminUserRow"
                   },
                   "title": "Response List Users Api V1 Admin Users Get",
                   "type": "array"
@@ -1985,6 +2396,65 @@
           }
         ],
         "summary": "Create Staff User",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{user_id}": {
+      "patch": {
+        "description": "تعديل اسم مستخدم أو دوره أو حالته.\n\nحارسان لا يمكن تجاوزهما:\n\n1. **المدير لا يعطّل نفسه ولا يخفّض دوره.** آخر مدير يفعل ذلك يُغلق\n   اللوحة على الجميع، ولا يوجد مسار عام لاستعادتها.\n2. **الأخصائي ذو المرضى لا يُخفَّض دوره.** قاعدة البيانات ترفضه أصلًا\n   (مفتاح أجنبي مركّب على ``users(id, role)``)، لكنها ترفضه بخطأ سلامة\n   غامض؛ هنا يتحول إلى رسالة تقول ما يجب فعله: انقل مرضاه أولًا.\n\nالتعطيل ليس ضمن الحارس الثاني عمدًا: تعطيل حساب مخترَق فعل عاجل، وعدد\nمرضاه ظاهر في نفس الشاشة فالقرار مبنيّ على معلومة لا على مفاجأة.",
+        "operationId": "update_user_api_v1_admin_users__user_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update User",
         "tags": [
           "admin"
         ]
