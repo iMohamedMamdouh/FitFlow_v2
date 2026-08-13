@@ -10,7 +10,8 @@ export async function SiteFooter() {
   const auth = await getTranslations("auth");
 
   return (
-    <footer className="border-line border-t">
+    <footer>
+      <div aria-hidden="true" className="tick-rule" />
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2">
           <Wordmark name={app("name")} tagline={app("tagline")} />
@@ -54,7 +55,7 @@ export async function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-line text-faint border-t px-5 py-5 text-center text-xs">
+      <div className="border-line text-faint border-t px-5 py-6 text-center text-xs">
         © {new Date().getFullYear()} {app("name")} — {t("rights")}
       </div>
     </footer>

@@ -45,7 +45,7 @@ export function ReviewForm({ planId, status }: { planId: string; status: PlanSta
 
       {approved && (
         <form action={decide}>
-          <SubmitButton variant="clay" pendingLabel={t("activating")}>
+          <SubmitButton variant="signal" pendingLabel={t("activating")}>
             {t("activate")}
           </SubmitButton>
         </form>

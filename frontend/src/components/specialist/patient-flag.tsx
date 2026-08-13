@@ -11,12 +11,12 @@ import type { PatientFlag } from "@/lib/api/schema";
  * شيء ملوّنًا بالإنذار.
  */
 const TONES = {
-  needs_review: "clay",
+  needs_review: "signal",
   acute_injury: "danger",
   stalled: "warning",
   not_started: "neutral",
   on_track: "success",
-} as const satisfies Record<PatientFlag, "clay" | "danger" | "warning" | "neutral" | "success">;
+} as const satisfies Record<PatientFlag, "signal" | "danger" | "warning" | "neutral" | "success">;
 
 export async function PatientFlagBadge({ flag }: { flag: PatientFlag }) {
   const t = await getTranslations("specialist.flags");

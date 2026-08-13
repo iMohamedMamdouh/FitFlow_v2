@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { NavRail, NavStrip, type NavLink } from "@/components/app-nav";
 import { Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -9,13 +10,21 @@ import { logoutAction } from "@/lib/auth/actions";
 import { readLocale, readTheme } from "@/lib/preferences";
 import type { UserPublic } from "@/lib/api/schema";
 
-export type NavLink = { href: string; label: string };
+export type { NavLink };
 
 /**
  * هيكل التطبيق بعد الدخول.
  *
+ * الرأسية **لوح حبري طافٍ** لا شريط ممتدّ بعرض الشاشة: كتلة داكنة
+ * مقصوصة الزاوية تعلو الصفحة بهامش من ثلاث جهات، فتُقرأ كأداة فوق
+ * المحتوى لا كإطار حوله. اللوح يحمل الهوية وأدوات الحساب فقط.
+ *
+ * التنقّل خرج من الرأسية إلى **مسار جانبي** على الشاشات العريضة: قائمة
+ * رأسية تحتمل النموّ (المرحلة العاشرة تضيف مساحة إدارة) بينما الشريط
+ * الأفقي كان سيضيق بعد رابطين. تحت `lg` يعود شريط شرائح أفقيًا.
+ *
  * المكوّن نفسه للمريض وللأخصائي، ويختلفان في قائمة الروابط فقط: نسخة
- * ثانية من الرأسية لكل دور تعني تعديلين لكل تغيير في التنقّل، وأحدهما
+ * ثانية من الهيكل لكل دور تعني تعديلين لكل تغيير في التنقّل، وأحدهما
  * يُنسى.
  */
 export async function Shell({
@@ -38,8 +47,8 @@ export async function Shell({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-line bg-paper/85 sticky top-0 z-40 border-b backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-5">
+      <header className="slab-shadow sticky top-0 z-40 px-2 pt-3 pb-2 sm:px-3">
+        <div className="cut cut-lg bg-slab text-slab-ink mx-auto flex h-14 max-w-7xl items-center gap-2 ps-3 pe-1.5 sm:gap-3 sm:ps-5 sm:pe-2">
           <Link href={home} className="shrink-0">
             <Wordmark name={app("name")} />
           </Link>
@@ -51,7 +60,7 @@ export async function Shell({
             <form action={logoutAction} className="flex items-center gap-2">
               <span
                 aria-hidden="true"
-                className="bg-accent-wash text-accent font-display hidden size-8 items-center justify-center rounded-full text-sm font-semibold sm:flex"
+                className="bg-signal text-signal-ink font-display hidden size-8 items-center justify-center rounded-xs text-sm font-semibold sm:flex"
               >
                 {initials}
               </span>
@@ -59,38 +68,30 @@ export async function Shell({
                 <span className="text-xs font-medium">{user.full_name}</span>
                 {/* الدور ظاهر دائمًا: من يملك حسابين — مريضًا وأخصائيًا —
                     يحتاج أن يعرف بأيّهما هو داخل الآن. */}
-                <span className="text-faint text-[0.65rem]">{roles(user.role)}</span>
+                <span className="text-[0.65rem] opacity-60">{roles(user.role)}</span>
               </span>
-              <Button type="submit" variant="quiet" size="sm">
+              <Button type="submit" variant="ghost" size="sm">
                 {nav("logout")}
               </Button>
             </form>
           </div>
         </div>
-
-        {/* التنقّل في شريط ثانٍ قابل للتمرير أفقيًا: الروابط وأدوات العرض
-            لا تتسع في شريط واحد على الموبايل، والطيّ خلف زر قائمة يخفي
-            المسارات المستخدمة يوميًا. */}
-        <nav
-          aria-label={nav("menu")}
-          className="border-line/60 mx-auto flex max-w-6xl gap-1 overflow-x-auto border-t px-3 text-sm"
-        >
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-subtle hover:text-ink hover:border-accent border-b-2 border-transparent px-3 py-2.5 whitespace-nowrap transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-10">{children}</main>
+      <div className="mx-auto flex w-full max-w-7xl flex-1 gap-8 px-3 sm:px-5">
+        <NavRail links={links} label={nav("menu")} />
 
-      <footer className="border-line text-faint border-t px-5 py-6 text-center text-xs">
-        {app("name")} — {app("tagline")}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <NavStrip links={links} label={nav("menu")} />
+          <main className="flex-1 pt-2 pb-12 lg:pt-8">{children}</main>
+        </div>
+      </div>
+
+      <footer className="mx-auto w-full max-w-7xl px-3 pb-8 sm:px-5">
+        <div aria-hidden="true" className="tick-rule" />
+        <p className="text-faint pt-4 text-center text-xs">
+          {app("name")} — {app("tagline")}
+        </p>
       </footer>
     </div>
   );

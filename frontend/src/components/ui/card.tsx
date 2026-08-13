@@ -2,10 +2,25 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+/**
+ * البطاقة.
+ *
+ * مستطيل شبه حادّ بحدّ رفيع. البروز — حين يُطلب — خطّ إشارة ليموني على
+ * الحافة العليا لا إطار ملوّن كامل: الإطار الكامل يصبغ محتوى البطاقة
+ * بنبرة لونية، وأغلب ما بداخلها هنا أرقام طبية تُقرأ لا تُلمَح.
+ */
+export function Card({
+  featured = false,
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { featured?: boolean }) {
   return (
     <div
-      className={cn("border-line bg-surface shadow-card rounded-xl border p-6", className)}
+      className={cn(
+        "border-line bg-surface shadow-card rounded-xs border p-6",
+        featured && "rule-signal",
+        className,
+      )}
       {...props}
     />
   );
@@ -36,8 +51,9 @@ export function CardHeader({
 /**
  * رقم واحد بارز مع تسميته.
  *
- * التسمية صغيرة بحروف متباعدة فوق الرقم، والرقم بخط العرض بوزن ثقيل:
- * ترتيب يجعل القيمة هي أول ما تقع عليه العين في شبكة من البطاقات.
+ * التسمية صغيرة بحروف متباعدة فوق الرقم، والرقم بخط العرض بوزن ثقيل،
+ * وتحته علامة قياس قصيرة. الترتيب يجعل القيمة أول ما تقع عليه العين في
+ * شبكة من البطاقات.
  */
 export function Stat({
   label,
@@ -51,7 +67,7 @@ export function Stat({
   tone?: "default" | "accent";
 }) {
   return (
-    <div className="border-line bg-surface rounded-xl border p-5">
+    <div className="border-line bg-surface relative rounded-xs border p-5">
       <span className="text-faint text-[0.7rem] font-medium tracking-[0.12em] uppercase">
         {label}
       </span>
@@ -63,12 +79,21 @@ export function Stat({
       >
         {value}
       </p>
+      <span
+        aria-hidden="true"
+        className={cn("mt-3 block h-0.5 w-8", tone === "accent" ? "bg-signal" : "bg-line-strong")}
+      />
       {hint !== undefined && <p className="text-subtle mt-2 text-xs leading-5">{hint}</p>}
     </div>
   );
 }
 
-/** عنوان قسم في الصفحة الخارجية — تسمية صغيرة فوق عنوان كبير. */
+/**
+ * عنوان قسم — تسمية صغيرة مسبوقة بعلامة إشارة، فوق عنوان كبير.
+ *
+ * التسمية بلون النص لا بلون الإشارة: الليموني لا يُقرأ نصًّا على خلفية
+ * فاتحة، فدوره هنا العلامة الصغيرة قبله.
+ */
 export function SectionHeading({
   eyebrow,
   title,
@@ -83,7 +108,8 @@ export function SectionHeading({
   return (
     <div className={cn("flex max-w-2xl flex-col gap-3", className)}>
       {eyebrow !== undefined && (
-        <span className="text-clay text-xs font-semibold tracking-[0.18em] uppercase">
+        <span className="text-ink inline-flex items-center gap-2.5 text-xs font-semibold tracking-[0.18em] uppercase">
+          <span aria-hidden="true" className="bg-signal inline-block h-2.5 w-6" />
           {eyebrow}
         </span>
       )}

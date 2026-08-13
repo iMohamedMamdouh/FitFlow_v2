@@ -3,9 +3,12 @@ import { cn } from "@/lib/utils";
 /**
  * علامة FitFlow.
  *
- * الرمز موجتان صاعدتان داخل مربّع — قراءتان مقصودتان: منحنى تقدّم، وحركة
- * إعادة تأهيل. مرسوم بـ `currentColor` فيتبع لون النص في الوضعين بلا
- * نسختين من الملف.
+ * الرمز أربعة أعمدة متدرّجة الارتفاع داخل مربّع حادّ الزوايا — قراءة
+ * مزدوجة مقصودة: قراءات قياس متتابعة، ومنحنى تقدّم صاعد. العمود الأخير
+ * وحده بلون الإشارة، فيقرأ كـ"القياس التالي" لا كزينة.
+ *
+ * العلامة مرسومة بـ`currentColor` عدا عمود الإشارة، فتتبع لون النص
+ * أينما وُضعت — على الورق الفاتح أو على اللوح الحبري — بلا نسخة ثانية.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -16,25 +19,18 @@ export function Logo({ className }: { className?: string }) {
       aria-hidden="true"
       focusable="false"
     >
-      <rect x="1" y="1" width="26" height="26" rx="8" fill="currentColor" opacity="0.12" />
-      <rect
-        x="1"
-        y="1"
-        width="26"
-        height="26"
-        rx="8"
+      <path d="M1 1h20l6 6v20H1V1Z" fill="currentColor" opacity="0.1" />
+      <path
+        d="M1 1h20l6 6v20H1V1Z"
         stroke="currentColor"
         strokeWidth="1.5"
-        opacity="0.45"
-      />
-      <path
-        d="M6 18.5c2.6 0 3.4-6 6-6s3.4 6 6 6 3.4-4 4-4"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
         strokeLinejoin="round"
+        opacity="0.5"
       />
-      <circle cx="18" cy="18.5" r="1.6" fill="currentColor" />
+      <rect x="6" y="16" width="2.6" height="6" fill="currentColor" />
+      <rect x="10.6" y="12.5" width="2.6" height="9.5" fill="currentColor" />
+      <rect x="15.2" y="14" width="2.6" height="8" fill="currentColor" />
+      <rect x="19.8" y="7" width="2.6" height="15" fill="var(--color-signal)" />
     </svg>
   );
 }
@@ -50,13 +46,13 @@ export function Wordmark({
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <Logo className="text-accent" />
+      <Logo />
       <span className="flex flex-col leading-none">
         <span className="font-display text-base font-semibold tracking-tight sm:text-lg">
           {name}
         </span>
         {tagline !== undefined && (
-          <span className="text-faint mt-1 text-[0.65rem] font-medium tracking-wide">
+          <span className="mt-1 text-[0.65rem] font-medium tracking-wide opacity-60">
             {tagline}
           </span>
         )}

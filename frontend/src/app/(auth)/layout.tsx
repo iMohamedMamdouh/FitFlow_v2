@@ -16,7 +16,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     <div className="relative flex min-h-dvh flex-col">
       <div
         aria-hidden="true"
-        className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_50%_at_50%_0%,black,transparent)] opacity-40"
+        className="bg-lanes pointer-events-none absolute inset-0 [mask-image:radial-gradient(60%_50%_at_50%_0%,black,transparent)]"
       />
 
       <header className="relative mx-auto flex w-full max-w-6xl items-center gap-3 px-5 py-5">

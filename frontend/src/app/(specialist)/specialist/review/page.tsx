@@ -51,10 +51,10 @@ export default async function ReviewQueuePage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <Badge tone="clay">{enums(`planType.${plan.plan_type}`)}</Badge>
+                <Badge tone="signal">{enums(`planType.${plan.plan_type}`)}</Badge>
                 <Link
                   href={`/specialist/plans/${plan.id}`}
-                  className={buttonStyles({ variant: "clay", size: "sm" })}
+                  className={buttonStyles({ variant: "signal", size: "sm" })}
                 >
                   {t("open")}
                 </Link>

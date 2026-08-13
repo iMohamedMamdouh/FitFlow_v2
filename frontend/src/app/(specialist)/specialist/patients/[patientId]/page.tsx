@@ -220,7 +220,7 @@ export default async function PatientRecordPage({
           <CardHeader title={t("adherenceChart")} />
           <TrendChart
             points={logSeries(logs, "diet_adherence_pct")}
-            color="var(--color-clay)"
+            color="var(--color-caution)"
             fractionDigits={0}
             domain={[0, 100]}
             unit="%"

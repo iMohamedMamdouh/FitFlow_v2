@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils";
 /**
  * تبديل الوضع الفاتح/الداكن.
  *
+ * الزر مرسوم بألوان نسبية (`currentColor`) لا بألوان مسمّاة: هو نفسه
+ * داخل اللوح الحبري في الشريط العلوي وفوق الورق الفاتح في أي مكان آخر،
+ * فلا تُصان نسختان من الزر نفسه.
+ *
  * التبديل يحدث في المتصفح مباشرة (سمة على `<html>` + كوكي) بلا نداء
  * للخادم: المظهر ألوان فقط، ونداء الخادم كان سيضيف تأخيرًا محسوسًا على
  * فعل يُتوقَّع أن يكون فوريًا. الكوكي يجعل الخادم يعرف الاختيار في الطلب
@@ -32,8 +36,8 @@ export function ThemeToggle({ initial }: { initial: Theme }) {
       aria-label={t(theme === "dark" ? "toLight" : "toDark")}
       title={t(theme === "dark" ? "toLight" : "toDark")}
       className={cn(
-        "border-line text-ink hover:border-accent hover:text-accent inline-flex size-8 sm:size-9",
-        "items-center justify-center rounded-full border transition-colors",
+        "inline-flex size-8 items-center justify-center rounded-xs border transition-colors sm:size-9",
+        "border-current/25 text-current hover:border-current/70",
       )}
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}

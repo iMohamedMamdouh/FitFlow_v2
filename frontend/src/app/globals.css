@@ -2,94 +2,173 @@
 
 /*
   ─────────────────────────────────────────────────────────────────────
-  نظام التصميم: "ورق عيادة"
+  نظام التصميم: "مِضمار"
   ─────────────────────────────────────────────────────────────────────
 
-  الاتجاه مقصود بعيدًا عن المظهر الشائع (رمادي أزرق + بنفسجي متدرّج +
-  زجاج شفاف): الخلفية **ورقية دافئة** لا رمادية باردة، والأسود مائل
-  للبني لا للأزرق، واللون الأساسي **صنوبري داكن** مع لون ثانٍ **طيني**
-  للنداءات. النتيجة أقرب لمطبوعة طبية منها إلى لوحة تحكم.
+  المرجع البصري ليس لوحات التحكم، بل **أدوات القياس في معمل التأهيل**:
+  خطوط المضمار، شريط القياس، شاشة الجهاز. من هنا جاءت ثلاث قواعد تحكم
+  كل شيء تحتها:
 
-  الوضع الداكن ليس عكسًا آليًا: أسوده دافئ (#14120F) لا أزرق، فيبقى
-  الطابع نفسه في الوضعين.
+  1. الحواف شبه حادّة. سلّم الاستدارة كله أقل من 10px، والزوايا الوحيدة
+     التي تُقصّ هي قصّة قُطرية واحدة (`.cut`) تُعطي الشكل طابع البطاقة
+     المعدنية لا الفقاعة. الاستدارة الكبيرة + الزجاج الشفاف هما أكثر ما
+     يجعل الواجهات متشابهة، فهما غائبان تمامًا.
+  2. لونان لا أكثر: **جرافيت** يقارب الأسود، و**ليموني كهربائي** واحد
+     للإشارة. الليموني لا يُكتب به نصّ أبدًا — يُملأ به فقط ويوضع فوقه
+     حبر داكن، ولهذا هناك رمزان منفصلان: `signal` للملء و`accent` للنص.
+  3. الألوان الحالية (positive/caution/critical) وظيفية لا هوية، فهي
+     خارج الثنائية عمدًا كي تبقى قابلة للتمييز فورًا في سياق طبي.
 
-  الفاتح هو الافتراضي. لا نتبع `prefers-color-scheme` تلقائيًا — المظهر
-  اختيار صريح يُخزَّن في كوكي ويصل من الخادم، فلا يومض شيء عند التحميل.
+  البنية ثلاث طبقات: قيم خام (primitive) → أدوار (semantic) → مكوّنات
+  (component). لا يذكر أي مكوّن قيمة لونية مباشرة، والتبديل بين الوضعين
+  يحدث في الطبقة الثانية وحدها.
+
+  الفاتح هو الافتراضي. لا نتبع `prefers-color-scheme`: المظهر اختيار
+  صريح يُخزَّن في كوكي ويصل من الخادم، فلا يومض شيء عند التحميل.
 */
 
+/* ═════════════════════════════ 1. الطبقة الخام — قيم لا معنى لها بعد */
+:root {
+  --chalk-000: #ffffff;
+  --chalk-050: #f2f4ee;
+  --chalk-100: #e9ece3;
+  --chalk-200: #dde1d6;
+  --chalk-300: #c4cab9;
+
+  --graphite-400: #858c7d;
+  --graphite-500: #656d5d;
+  --graphite-600: #565d50;
+  --graphite-700: #3a4137;
+  --graphite-800: #282e26;
+  --graphite-850: #1f2420;
+  --graphite-900: #171b16;
+  --graphite-950: #131711;
+  --graphite-990: #0f1210;
+
+  --lime-200: #eaf4cd;
+  --lime-300: #d9f75f;
+  --lime-400: #c2e319;
+  --lime-500: #a4c40a;
+  --lime-700: #405c00;
+  --lime-800: #2f4300;
+  --lime-900: #232b12;
+
+  --moss-400: #7fd08f;
+  --moss-600: #2f7a43;
+  --moss-050: #e3f1e3;
+  --moss-950: #16281a;
+
+  --ochre-400: #e8b34d;
+  --ochre-600: #8a5a00;
+  --ochre-050: #faedd0;
+  --ochre-950: #2f2510;
+
+  --brick-400: #f0857a;
+  --brick-600: #b0271f;
+  --brick-050: #fbe3e0;
+  --brick-950: #33191a;
+}
+
+/* ═══════════════════════════ 2. طبقة الأدوار — ما يتغيّر بين الوضعين */
 :root,
 [data-theme="light"] {
   color-scheme: light;
 
-  --paper: #faf7f2; /* خلفية الصفحة — ورق دافئ */
-  --surface: #ffffff; /* البطاقات */
-  --raised: #f2ede4; /* مساحات ثانوية داخل البطاقة */
-  --ink: #171310; /* النص الأساسي — أسود دافئ */
-  --subtle: #6d6358; /* نص ثانوي */
-  --faint: #9a8f82; /* تسميات وحواشٍ */
-  --line: #e3dbcf; /* الحدود */
-  --line-strong: #cfc4b4;
+  --paper: var(--chalk-050); /* خلفية الصفحة — طباشيري بارد */
+  --surface: var(--chalk-000); /* البطاقات */
+  --raised: var(--chalk-100); /* مساحات ثانوية داخل البطاقة */
+  --ink: var(--graphite-950); /* النص الأساسي */
+  --subtle: var(--graphite-600); /* نص ثانوي */
+  --faint: var(--graphite-400); /* تسميات وحواشٍ */
+  --line: var(--chalk-200); /* الحدود */
+  --line-strong: var(--chalk-300);
 
-  --accent: #0f5c4e; /* صنوبري داكن — الهوية */
-  --accent-hover: #0b463c;
-  --accent-ink: #ffffff; /* النص فوق اللون الأساسي */
-  --accent-wash: #e3efe9; /* خلفية خفيفة بلون الهوية */
+  /* لون النص التفاعلي: زيتوني عميق — نسخة الليموني القابلة للقراءة. */
+  --accent: var(--lime-700);
+  --accent-hover: var(--lime-800);
+  --accent-ink: var(--chalk-000);
+  --accent-wash: var(--lime-200);
 
-  --clay: #c25327; /* طيني — النداءات والتمييز */
-  --clay-hover: #a54419;
-  --clay-ink: #ffffff;
-  --clay-wash: #fbe9df;
+  /* لون الإشارة: يُملأ به ولا يُكتب. الحبر فوقه داكن دائمًا. */
+  --signal: var(--lime-400);
+  --signal-hover: var(--lime-300);
+  --signal-ink: var(--graphite-950);
+  --signal-wash: var(--lime-200);
 
-  --positive: #2f6b3a;
-  --positive-wash: #e3f0e2;
-  --caution: #97591a;
-  --caution-wash: #fbeedb;
-  --critical: #a92f26;
-  --critical-wash: #fbe4e1;
+  --positive: var(--moss-600);
+  --positive-wash: var(--moss-050);
+  --caution: var(--ochre-600);
+  --caution-wash: var(--ochre-050);
+  --critical: var(--brick-600);
+  --critical-wash: var(--brick-050);
 
-  /* شريط النداء الأخير: لون خاص لأن `accent` في الوضع الداكن فاتح،
-     وكتلة بعرض الصفحة به تصبح أشدّ سطوعًا من كل ما حولها. */
-  --cta: #0f5c4e;
-  --cta-ink: #f4efe6;
+  /* اللوح الداكن: الشريط العلوي وشريط النداء الأخير. في الوضع الفاتح
+     كتلة حبرية على صفحة طباشيرية، وفي الداكن ترتفع درجة عن الخلفية —
+     نفس القيمة في الوضعين كانت ستذيبه في المحيط. */
+  --slab: var(--graphite-950);
+  --slab-ink: var(--chalk-050);
 
-  --ring: #0f5c4e;
-  --shadow-card: 0 1px 2px rgb(23 19 16 / 0.04), 0 8px 24px -12px rgb(23 19 16 / 0.14);
+  --ring: var(--lime-700);
+  --shadow-card: 0 1px 1px rgb(19 23 17 / 0.04), 0 6px 18px -10px rgb(19 23 17 / 0.16);
+  --slab-drop: drop-shadow(0 10px 18px rgb(19 23 17 / 0.18));
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --paper: #14120f; /* أسود دافئ لا أزرق */
-  --surface: #1d1a15;
-  --raised: #272219;
-  --ink: #f4efe6;
-  --subtle: #a99e8f;
-  --faint: #7d7263;
-  --line: #322c23;
-  --line-strong: #463e32;
+  --paper: var(--graphite-990);
+  --surface: var(--graphite-900);
+  --raised: var(--graphite-850);
+  --ink: #eef1e9;
+  --subtle: #a3ab9c;
+  --faint: #767e70;
+  --line: var(--graphite-800);
+  --line-strong: var(--graphite-700);
 
-  --accent: #58b79d;
-  --accent-hover: #74c9b1;
-  --accent-ink: #0a2a24;
-  --accent-wash: #17332c;
+  --accent: #c9ec4a;
+  --accent-hover: var(--lime-300);
+  --accent-ink: var(--graphite-990);
+  --accent-wash: var(--lime-900);
 
-  --clay: #e4805a;
-  --clay-hover: #ef9673;
-  --clay-ink: #2b1108;
-  --clay-wash: #35201a;
+  --signal: var(--lime-300);
+  --signal-hover: #e6ff8a;
+  --signal-ink: var(--graphite-990);
+  --signal-wash: var(--lime-900);
 
-  --positive: #7bc487;
-  --positive-wash: #1c2f1f;
-  --caution: #e0a95c;
-  --caution-wash: #33260f;
-  --critical: #e88479;
-  --critical-wash: #351b19;
+  --positive: var(--moss-400);
+  --positive-wash: var(--moss-950);
+  --caution: var(--ochre-400);
+  --caution-wash: var(--ochre-950);
+  --critical: var(--brick-400);
+  --critical-wash: var(--brick-950);
 
-  --cta: #17332c;
-  --cta-ink: #f4efe6;
+  --slab: var(--graphite-850);
+  --slab-ink: #eef1e9;
 
-  --ring: #58b79d;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 28px -14px rgb(0 0 0 / 0.7);
+  --ring: #c9ec4a;
+  --shadow-card: 0 1px 1px rgb(0 0 0 / 0.4), 0 10px 24px -14px rgb(0 0 0 / 0.7);
+  --slab-drop: drop-shadow(0 12px 22px rgb(0 0 0 / 0.55));
+}
+
+/* ═════════════════════════ 3. طبقة المكوّنات — أدوار مربوطة بموضعها */
+:root {
+  --topbar-bg: var(--slab);
+  --topbar-ink: var(--slab-ink);
+  --topbar-height: 3.5rem;
+
+  --rail-marker: var(--signal);
+  --rail-active-bg: var(--raised);
+
+  --field-bg: var(--raised);
+  --field-border: var(--line);
+  --field-border-focus: var(--accent);
+
+  --card-bg: var(--surface);
+  --card-border: var(--line);
+
+  /* حجم القصّة القُطرية. مربوط بمتغيّر كي تتفاوت بين زرّ وبطاقة بلا
+     تكرار المضلّع نفسه أربع مرات. */
+  --cut: 0.75rem;
 }
 
 @theme inline {
@@ -107,10 +186,10 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-wash: var(--accent-wash);
 
-  --color-clay: var(--clay);
-  --color-clay-hover: var(--clay-hover);
-  --color-clay-ink: var(--clay-ink);
-  --color-clay-wash: var(--clay-wash);
+  --color-signal: var(--signal);
+  --color-signal-hover: var(--signal-hover);
+  --color-signal-ink: var(--signal-ink);
+  --color-signal-wash: var(--signal-wash);
 
   --color-positive: var(--positive);
   --color-positive-wash: var(--positive-wash);
@@ -119,22 +198,33 @@
   --color-critical: var(--critical);
   --color-critical-wash: var(--critical-wash);
 
-  --color-cta: var(--cta);
-  --color-cta-ink: var(--cta-ink);
+  --color-slab: var(--slab);
+  --color-slab-ink: var(--slab-ink);
 
   --color-ring: var(--ring);
 
-  /* خطّان بشخصية مختلفة: Rubik الهندسي للعناوين والأرقام، وIBM Plex
-     Sans Arabic للنص — الاثنان يدعمان العربية واللاتينية بالوزن نفسه،
-     فلا ينكسر الإيقاع عند تبديل اللغة. */
-  --font-sans: var(--font-plex), system-ui, sans-serif;
-  --font-display: var(--font-rubik), var(--font-plex), system-ui, sans-serif;
+  /* سلّم استدارة شبه حادّ: أعلى قيمة 10px. الفئات القائمة في الشيفرة
+     (`rounded-lg`, `rounded-xl`, `rounded-2xl`) تتبع هذا السلّم، فيتغيّر
+     طابع الواجهة كلها من نقطة واحدة. */
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+
+  /* Alexandria هندسي عريض للعناوين والأرقام، وReadex Pro للنص: كلاهما
+     مرسوم للعربية واللاتينية معًا بالوزن نفسه، فلا ينكسر الإيقاع عند
+     تبديل اللغة ولا يُحمَّل خط ثالث. */
+  --font-sans: var(--font-readex), system-ui, sans-serif;
+  --font-display: var(--font-alexandria), var(--font-readex), system-ui, sans-serif;
 
   --shadow-card: var(--shadow-card);
 }
 
 body {
-  /* أرقام لاتينية مع النص العربي، وبعرض ثابت في الجداول والأرقام الكبيرة. */
+  /* أرقام لاتينية مع النص العربي، وبعرض ثابت في الجداول والأرقام. */
   font-feature-settings: "lnum" 1;
   background-color: var(--paper);
   color: var(--ink);
@@ -145,18 +235,74 @@ body {
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 ::selection {
-  background: var(--accent-wash);
-  color: var(--ink);
+  background: var(--signal);
+  color: var(--signal-ink);
 }
 
-/* شبكة نقطية خفيفة تُستخدم كخلفية للأقسام البارزة في الصفحة الخارجية. */
-.bg-grid {
-  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
-  background-size: 22px 22px;
+/*
+  القصّة القُطرية.
+
+  زاوية واحدة مقصوصة في نهاية السطر العلوي. تُقلب مع الاتجاه لأن
+  `clip-path` يعمل بإحداثيات فيزيائية لا منطقية، فبقاؤها ثابتة كانت
+  ستضع القصّة في الجهة الخطأ عند تبديل اللغة.
+*/
+.cut {
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+}
+
+[dir="rtl"] .cut {
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut));
+}
+
+/* `clip-path` يقصّ ما يُرسم خارج الشكل، وحلقة التركيز الخارجية منه. لذا
+   يستبدلها العنصر المقصوص بحلقة داخلية مزدوجة: أيًّا كان لون الخلفية،
+   أحد الشريطين يخالفها. */
+.cut:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 2px var(--paper),
+    inset 0 0 0 4px var(--ring);
+}
+
+.cut-sm {
+  --cut: 0.5rem;
+}
+
+.cut-lg {
+  --cut: 1.5rem;
+}
+
+/* خطوط المضمار: أعمدة رفيعة متكرّرة تُستخدم خلف الأقسام البارزة. */
+.bg-lanes {
+  background-image: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 76px);
+}
+
+/* شريط قياس: علامات قصيرة متتابعة تفصل الأقسام. */
+.tick-rule {
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--line-strong) 0 1px,
+    transparent 1px 12px
+  );
+}
+
+/* ظلّ اللوح الطافي.
+
+   يُطبَّق على **الغلاف** لا على اللوح نفسه: `clip-path` يقصّ ما يُرسم
+   خارج الشكل، والظلّ الخارجي منه. الفلتر يُطبَّق بعد القصّ فيتبع الحافة
+   القُطرية بدل أن يختفي. */
+.slab-shadow {
+  filter: var(--slab-drop);
+}
+
+/* خطّ إشارة أعلى البطاقة المميّزة — بديل الإطار الملوّن الكامل. */
+.rule-signal {
+  box-shadow: inset 0 3px 0 0 var(--signal);
 }
 
 @media (prefers-reduced-motion: reduce) {

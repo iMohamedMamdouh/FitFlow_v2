@@ -13,15 +13,16 @@ import { cn } from "@/lib/utils";
 /**
  * حقول الإدخال.
  *
- * التسمية صغيرة بحروف متباعدة فوق الحقل، والحقل نفسه بخلفية `raised`
- * وحد رفيع يتلوّن بلون الهوية عند التركيز. المظهر مقصود ليقرأ كنموذج
- * طبي منظّم لا كصندوق بحث.
+ * التسمية صغيرة بحروف متباعدة فوق الحقل، والحقل مستطيل بلا استدارة
+ * تقريبًا: حدّ رفيع من ثلاث جهات وحدّ سفلي أثقل يتحوّل إلى لون الهوية
+ * عند التركيز. الحافة السفلية الثقيلة تجعل الحقل يُقرأ كخانة في نموذج
+ * قياس لا كصندوق بحث، وتُبقي موضع الكتابة واضحًا في نماذج طويلة.
  */
 
 const controlStyles =
-  "w-full rounded-lg border border-line bg-raised px-3.5 py-2.5 text-sm text-ink " +
-  "placeholder:text-faint transition-colors hover:border-line-strong " +
-  "focus:border-accent disabled:opacity-60";
+  "w-full rounded-xs border border-line border-b-2 border-b-line-strong bg-raised " +
+  "px-3.5 py-2.5 text-sm text-ink placeholder:text-faint transition-colors " +
+  "hover:border-b-accent focus:border-b-accent disabled:opacity-60";
 
 function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
@@ -84,7 +85,7 @@ export function TextField({
         id={id}
         aria-invalid={error != null}
         aria-describedby={error != null ? `${id}-error` : undefined}
-        className={cn(controlStyles, error != null && "border-critical", className)}
+        className={cn(controlStyles, error != null && "border-b-critical", className)}
         {...props}
       />
     </Wrapper>
@@ -109,7 +110,7 @@ export function SelectField({
         className={cn(
           controlStyles,
           "appearance-none",
-          error != null && "border-critical",
+          error != null && "border-b-critical",
           className,
         )}
         {...props}
@@ -135,7 +136,7 @@ export function TextAreaField({
         rows={3}
         aria-invalid={error != null}
         aria-describedby={error != null ? `${id}-error` : undefined}
-        className={cn(controlStyles, "resize-y", error != null && "border-critical", className)}
+        className={cn(controlStyles, "resize-y", error != null && "border-b-critical", className)}
         {...props}
       />
     </Wrapper>
@@ -190,9 +191,9 @@ export function CheckboxCard({
     <label
       htmlFor={id}
       className={cn(
-        "border-line bg-surface hover:border-accent flex cursor-pointer items-center gap-3",
-        "rounded-lg border px-3.5 py-3 text-sm transition-colors",
-        "has-[:checked]:border-accent has-[:checked]:bg-accent-wash",
+        "border-line bg-surface hover:border-line-strong flex cursor-pointer items-center gap-3",
+        "border-s-line rounded-xs border border-s-[3px] px-3.5 py-3 text-sm transition-colors",
+        "has-[:checked]:border-s-signal has-[:checked]:bg-accent-wash",
         className,
       )}
     >

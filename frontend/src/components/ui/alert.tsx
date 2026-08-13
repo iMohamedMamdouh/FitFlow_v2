@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
  * دون أن يتحوّل النص إلى كتلة لونية يصعب قراءتها — وهو ما يهم هنا لأن
  * أطول تنبيهات هذا التطبيق نصوص طبية تُقرأ فعلًا لا تُلمَح.
  */
-const alertStyles = cva("rounded-lg border-s-4 px-4 py-3.5 text-sm leading-7", {
+const alertStyles = cva("rounded-xs border-s-[3px] px-4 py-3.5 text-sm leading-7", {
   variants: {
     tone: {
-      info: "border-s-accent bg-accent-wash text-ink",
+      info: "border-s-signal bg-accent-wash text-ink",
       success: "border-s-positive bg-positive-wash text-ink",
       warning: "border-s-caution bg-caution-wash text-ink",
       danger: "border-s-critical bg-critical-wash text-ink",
@@ -44,14 +44,21 @@ export function Alert({
   );
 }
 
+/**
+ * الوسم.
+ *
+ * شريحة مستطيلة بزاوية مقصوصة لا كبسولة مستديرة. نبرة `signal` وحدها
+ * مملوءة بالليموني الكامل — تُستخدم لما يحتاج انتباهًا فوريًا (خطة
+ * تنتظر قرارًا مثلًا)، وبقيّة النبرات خلفية باهتة ونصّ ملوّن.
+ */
 const badgeStyles = cva(
-  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
+  "cut cut-sm inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium whitespace-nowrap",
   {
     variants: {
       tone: {
         neutral: "bg-raised text-subtle",
         accent: "bg-accent-wash text-accent",
-        clay: "bg-clay-wash text-clay",
+        signal: "bg-signal text-signal-ink",
         success: "bg-positive-wash text-positive",
         warning: "bg-caution-wash text-caution",
         danger: "bg-critical-wash text-critical",

@@ -58,7 +58,7 @@ export default async function OnboardingPage({
               className={cn(
                 "h-1 rounded-full transition-colors",
                 position < index && "bg-accent",
-                position === index && "bg-clay",
+                position === index && "bg-signal",
                 position > index && "bg-line",
               )}
             />

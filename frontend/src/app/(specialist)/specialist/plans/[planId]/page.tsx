@@ -67,7 +67,7 @@ export default async function PlanReviewPage({ params }: { params: Promise<{ pla
             )}
           </p>
         </div>
-        <Badge tone={plan.status === "active" ? "success" : "clay"}>
+        <Badge tone={plan.status === "active" ? "success" : "signal"}>
           {enums(`planStatus.${plan.status}`)}
         </Badge>
       </header>

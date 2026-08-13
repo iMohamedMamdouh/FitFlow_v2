@@ -6,25 +6,30 @@ import { cn } from "@/lib/utils";
 /**
  * الأزرار.
  *
- * ثلاث درجات نداء لا خمس: `clay` للفعل الرئيسي في الشاشة (لون واحد لافت
- * لا يتكرر)، `solid` للأفعال العادية، و`outline`/`quiet` لما دونها.
- * تعدّد الأزرار البارزة في شاشة واحدة يلغي معنى البروز.
+ * ثلاث درجات نداء لا خمس: `signal` للفعل الرئيسي في الشاشة (ليموني مملوء
+ * بحبر داكن، لا يتكرر مرتين في شاشة واحدة)، `solid` كتلة حبرية للأفعال
+ * العادية، و`outline`/`quiet` لما دونها. تعدّد الأزرار البارزة يلغي معنى
+ * البروز.
  *
- * الزوايا صغيرة (`rounded-lg` وأقل) عمدًا: الحواف شديدة الاستدارة هي أكثر
- * ما يعطي الواجهات طابعًا متشابهًا.
+ * الشكل: زاوية واحدة مقصوصة قُطريًا في الطرازين المملوءين. القصّة تحذف
+ * الحدّ على القُطر، فالطرازان ذوا الإطار (`outline`/`quiet`) يبقيان
+ * مستطيلين — إطار مقطوع بلا خطّ أسوأ من إطار كامل.
  */
 const buttonStyles = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg font-medium tracking-tight " +
+  "inline-flex items-center justify-center gap-2 font-medium tracking-tight " +
     "transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 " +
     "active:translate-y-px",
   {
     variants: {
       variant: {
-        clay: "bg-clay text-clay-ink hover:bg-clay-hover shadow-sm",
-        solid: "bg-accent text-accent-ink hover:bg-accent-hover shadow-sm",
+        signal: "cut cut-sm bg-signal text-signal-ink hover:bg-signal-hover",
+        solid: "cut cut-sm bg-ink text-paper hover:bg-ink/90",
         outline:
-          "border-line-strong text-ink hover:border-accent hover:text-accent border bg-transparent",
-        quiet: "text-subtle hover:text-ink hover:bg-raised",
+          "rounded-xs border border-line-strong text-ink hover:border-accent hover:text-accent bg-transparent",
+        quiet: "rounded-xs text-subtle hover:text-ink hover:bg-raised",
+        // `ghost` مرسوم بألوان نسبية ليعمل داخل اللوح الحبري في الشريط
+        // العلوي: `quiet` هناك نصّ رمادي داكن على خلفية داكنة، أي لا شيء.
+        ghost: "rounded-xs text-current opacity-70 hover:opacity-100 hover:bg-current/10",
       },
       size: {
         sm: "h-9 px-3 text-sm sm:px-3.5",

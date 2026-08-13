@@ -14,23 +14,38 @@ const SECTIONS = [
   { href: "#faq", key: "faq" },
 ] as const;
 
+/**
+ * الشريط العلوي للصفحة الخارجية.
+ *
+ * **لوح حبري طافٍ** بزاوية مقصوصة، بعرض المحتوى لا بعرض الشاشة، يفصله
+ * هامش عن أعلى الصفحة فيبدو مركّبًا فوقها. البديل الشائع — شريط ممتدّ
+ * شبه شفاف مع ضبابية — هو أكثر ما يجعل المواقع متشابهة، ويختفي فوق
+ * المحتوى الفاتح.
+ *
+ * الكتلة الداكنة تحلّ مشكلة أخرى: الصفحة الخارجية فاتحة وطباشيرية، فبقاء
+ * الشريط بلونها كان يجعل حدّه السفلي هو الشيء الوحيد الذي يعرّفه.
+ */
 export async function SiteHeader({ locale, theme }: { locale: Locale; theme: Theme }) {
   const t = await getTranslations("landing.nav");
   const auth = await getTranslations("auth");
   const app = await getTranslations("app");
 
   return (
-    <header className="border-line bg-paper/85 sticky top-0 z-40 border-b backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-5">
+    <header className="slab-shadow sticky top-0 z-40 px-2 pt-3 pb-2 sm:px-3">
+      <div className="cut cut-lg bg-slab text-slab-ink mx-auto flex h-14 max-w-6xl items-center gap-2 ps-3 pe-1.5 sm:gap-6 sm:ps-5 sm:pe-2">
         <Link href="/" className="shrink-0">
           <Wordmark name={app("name")} />
         </Link>
 
         {/* روابط الأقسام تختفي على الشاشات الصغيرة: التنقّل الحقيقي هناك
             هو التمرير، وازدحام الشريط يدفع زر البدء خارج الشاشة. */}
-        <nav className="text-subtle hidden flex-1 items-center gap-7 text-sm md:flex">
+        <nav className="hidden flex-1 items-center gap-7 text-sm md:flex">
           {SECTIONS.map((section) => (
-            <a key={section.href} href={section.href} className="hover:text-ink transition-colors">
+            <a
+              key={section.href}
+              href={section.href}
+              className="after:bg-signal relative py-1 opacity-70 transition-opacity after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:opacity-0 after:transition-opacity hover:opacity-100 hover:after:opacity-100"
+            >
               {t(section.key)}
             </a>
           ))}
@@ -42,15 +57,18 @@ export async function SiteHeader({ locale, theme }: { locale: Locale; theme: The
         <div className="ms-auto flex items-center gap-1.5 sm:gap-2 md:ms-0">
           <LocaleSwitcher current={locale} />
           <ThemeToggle initial={theme} />
-          <Link href="/login" className={buttonStyles({ variant: "quiet", size: "sm" })}>
+          <Link href="/login" className={buttonStyles({ variant: "ghost", size: "sm" })}>
             {auth("login")}
           </Link>
           <Link
             href="/register"
             className={buttonStyles({
-              variant: "clay",
+              variant: "signal",
               size: "sm",
-              className: "hidden sm:inline-flex",
+              // `max-sm:hidden` لا `hidden sm:inline-flex`: الأخيرة تتصادم
+              // مع `inline-flex` في أساس الزر، وترتيب الملف الناتج هو ما
+              // يحسم التصادم لا ترتيب الفئات هنا.
+              className: "max-sm:hidden",
             })}
           >
             {auth("register")}

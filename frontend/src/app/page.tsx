@@ -35,20 +35,26 @@ export default async function LandingPage() {
         <section className="relative overflow-hidden">
           <div
             aria-hidden="true"
-            className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_60%_at_50%_0%,black,transparent)] opacity-40"
+            className="bg-lanes pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]"
           />
-          <div className="relative mx-auto grid max-w-6xl gap-14 px-5 py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-24">
+          <div className="relative mx-auto grid max-w-6xl gap-14 px-5 py-14 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:py-20">
             <div className="flex flex-col items-start gap-6">
-              <Badge tone="clay">{t("hero.eyebrow")}</Badge>
+              <Badge tone="signal">{t("hero.eyebrow")}</Badge>
 
-              <h1 className="font-display text-4xl leading-[1.15] font-semibold tracking-tight text-balance sm:text-5xl">
-                {t("hero.title")} <span className="text-accent">{t("hero.titleAccent")}</span>
+              <h1 className="font-display text-4xl leading-[1.3] font-semibold tracking-tight text-balance sm:text-5xl sm:leading-[1.25]">
+                {t("hero.title")}{" "}
+                {/* الكلمة المميّزة مظلّلة بالليموني لا مكتوبة به: النص
+                    الليموني على ورق فاتح لا يُقرأ، والتظليل يعطي التمييز
+                    نفسه بتباين كامل. */}
+                <span className="bg-signal text-signal-ink box-decoration-clone px-2 py-0.5">
+                  {t("hero.titleAccent")}
+                </span>
               </h1>
 
               <p className="text-subtle max-w-xl text-lg leading-9">{t("hero.body")}</p>
 
               <div className="flex flex-wrap items-center gap-3">
-                <Link href="/register" className={buttonStyles({ variant: "clay", size: "lg" })}>
+                <Link href="/register" className={buttonStyles({ variant: "signal", size: "lg" })}>
                   {t("hero.primary")}
                 </Link>
                 <a href="#how" className={buttonStyles({ variant: "outline", size: "lg" })}>
@@ -60,10 +66,10 @@ export default async function LandingPage() {
             </div>
 
             <div className="relative">
-              {/* لوح خلفي مائل يعطي الصورة عمقًا بلا ظل ثقيل. */}
+              {/* لوح خلفي مزاح بمقدار ثابت — عمق بحافة حادّة لا بظلّ ناعم. */}
               <div
                 aria-hidden="true"
-                className="border-line bg-accent-wash absolute inset-0 -rotate-2 rounded-2xl border"
+                className="bg-accent-wash border-line absolute inset-0 translate-x-3 translate-y-3 border rtl:-translate-x-3"
               />
               <Image
                 src="/images/hero.svg"
@@ -71,7 +77,7 @@ export default async function LandingPage() {
                 width={960}
                 height={640}
                 priority
-                className="border-line bg-surface shadow-card relative w-full rounded-2xl border"
+                className="border-line bg-surface relative w-full border"
               />
             </div>
           </div>
@@ -81,13 +87,14 @@ export default async function LandingPage() {
         <section className="border-line border-y">
           <div className="mx-auto grid max-w-6xl divide-y divide-[var(--color-line)] px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
             {(["engine", "review", "floor"] as const).map((key) => (
-              <div key={key} className="flex flex-col gap-1.5 px-2 py-8 sm:px-8">
+              <div key={key} className="flex flex-col items-start gap-2 px-2 py-8 sm:px-8">
                 <span className="text-faint text-[0.7rem] font-semibold tracking-[0.14em] uppercase">
                   {t(`stats.${key}Label`)}
                 </span>
-                <span className="font-display text-accent text-2xl font-semibold tracking-tight">
+                <span className="font-display text-2xl font-semibold tracking-tight">
                   {t(`stats.${key}Value`)}
                 </span>
+                <span aria-hidden="true" className="bg-signal h-0.5 w-8" />
                 <span className="text-subtle text-sm">{t(`stats.${key}Hint`)}</span>
               </div>
             ))}
@@ -95,7 +102,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ─────────────────────────────────────────────── كيف يعمل */}
-        <section id="how" className="scroll-mt-20">
+        <section id="how" className="scroll-mt-24">
           <div className="mx-auto max-w-6xl px-5 py-20">
             <SectionHeading
               eyebrow={t("how.eyebrow")}
@@ -103,11 +110,18 @@ export default async function LandingPage() {
               description={t("how.body")}
             />
 
-            <ol className="border-line mt-12 grid gap-px overflow-hidden rounded-2xl border bg-[var(--color-line)] sm:grid-cols-2 lg:grid-cols-4">
+            {/* مسارات: كل خطوة عمود يبدأ بخطّ علوي، وخطّ الخطوة الأولى
+                وحده بلون الإشارة — نقطة البداية تُقرأ من الشكل لا من
+                الرقم وحده. */}
+            <ol className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
               {STEP_KEYS.map((key, index) => (
-                <li key={key} className="bg-surface flex flex-col gap-3 p-7">
-                  <span className="border-line text-accent font-display flex size-9 items-center justify-center rounded-full border text-sm font-semibold tabular-nums">
-                    {index + 1}
+                <li key={key} className="flex flex-col gap-3">
+                  <span
+                    aria-hidden="true"
+                    className={index === 0 ? "bg-signal h-1 w-full" : "bg-line-strong h-1 w-full"}
+                  />
+                  <span className="font-display text-faint text-xs font-semibold tabular-nums">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="font-display font-semibold tracking-tight">
                     {t(`how.${key}Title`)}
@@ -120,7 +134,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ─────────────────────────────────────────────── المميزات */}
-        <section id="features" className="bg-raised/60 border-line scroll-mt-20 border-y">
+        <section id="features" className="bg-raised/50 border-line scroll-mt-24 border-y">
           <div className="mx-auto max-w-6xl px-5 py-20">
             <SectionHeading
               eyebrow={t("features.eyebrow")}
@@ -132,9 +146,9 @@ export default async function LandingPage() {
               {FEATURE_KEYS.map((key, index) => (
                 <article
                   key={key}
-                  className="border-line bg-surface flex flex-col gap-3 rounded-xl border p-6"
+                  className="border-line bg-surface flex flex-col gap-3 rounded-xs border p-6"
                 >
-                  <span className="bg-accent-wash text-accent font-display flex size-9 items-center justify-center rounded-lg text-sm font-semibold tabular-nums">
+                  <span className="bg-ink text-paper font-display cut cut-sm flex size-9 items-center justify-center text-sm font-semibold tabular-nums">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <h3 className="font-display font-semibold tracking-tight">
@@ -153,7 +167,7 @@ export default async function LandingPage() {
                   alt={t("features.title")}
                   width={480}
                   height={320}
-                  className="border-line bg-surface w-full rounded-xl border p-2"
+                  className="border-line bg-surface w-full rounded-xs border p-2"
                 />
               ))}
             </div>
@@ -161,7 +175,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ─────────────────────────────────────────────── الأمان */}
-        <section id="safety" className="scroll-mt-20">
+        <section id="safety" className="scroll-mt-24">
           <div className="mx-auto grid max-w-6xl gap-14 px-5 py-20 lg:grid-cols-2 lg:items-center">
             <div>
               <SectionHeading
@@ -170,10 +184,15 @@ export default async function LandingPage() {
                 description={t("safety.body")}
               />
 
-              <ul className="mt-8 flex flex-col gap-4">
+              {/* علامات قياس على خطّ رأسي بدل صفّ من علامات ✓ — النقاط هنا
+                  حدود سلامة متتابعة لا قائمة مزايا. */}
+              <ul className="border-line mt-8 flex flex-col border-s">
                 {(["point1", "point2", "point3", "point4"] as const).map((key) => (
-                  <li key={key} className="flex gap-3.5">
-                    <CheckMark />
+                  <li key={key} className="relative py-3 ps-5">
+                    <span
+                      aria-hidden="true"
+                      className="bg-signal absolute start-0 top-5 h-0.5 w-3"
+                    />
                     <span className="text-subtle text-sm leading-7">{t(`safety.${key}`)}</span>
                   </li>
                 ))}
@@ -185,13 +204,13 @@ export default async function LandingPage() {
               alt={t("safety.imageAlt")}
               width={720}
               height={560}
-              className="border-line bg-raised w-full rounded-2xl border p-2"
+              className="border-line bg-raised w-full rounded-xs border p-2"
             />
           </div>
         </section>
 
         {/* ─────────────────────────────────────────────── أسئلة */}
-        <section id="faq" className="border-line scroll-mt-20 border-t">
+        <section id="faq" className="border-line scroll-mt-24 border-t">
           <div className="mx-auto max-w-3xl px-5 py-20">
             <SectionHeading eyebrow={t("faq.eyebrow")} title={t("faq.title")} />
 
@@ -215,18 +234,19 @@ export default async function LandingPage() {
         </section>
 
         {/* ─────────────────────────────────────────────── نداء أخير */}
-        <section className="px-5 pb-20">
-          <div className="bg-cta text-cta-ink border-accent/30 relative mx-auto max-w-6xl overflow-hidden rounded-2xl border px-8 py-14 sm:px-14">
+        <section className="px-3 pb-20 sm:px-5">
+          <div className="bg-slab text-slab-ink cut cut-lg relative mx-auto max-w-6xl overflow-hidden px-8 py-14 sm:px-14">
             <div
               aria-hidden="true"
-              className="bg-grid pointer-events-none absolute inset-0 opacity-15"
+              className="bg-lanes pointer-events-none absolute inset-0 opacity-20"
             />
             <div className="relative flex flex-col items-start gap-5">
+              <span aria-hidden="true" className="bg-signal h-1 w-12" />
               <h2 className="font-display max-w-2xl text-2xl leading-tight font-semibold tracking-tight text-balance sm:text-3xl">
                 {t("cta.title")}
               </h2>
               <p className="max-w-xl text-base leading-8 opacity-85">{t("cta.body")}</p>
-              <Link href="/register" className={buttonStyles({ variant: "clay", size: "lg" })}>
+              <Link href="/register" className={buttonStyles({ variant: "signal", size: "lg" })}>
                 {t("cta.button")}
               </Link>
               <p className="text-xs opacity-70">{consent("shortNotice")}</p>
@@ -237,24 +257,5 @@ export default async function LandingPage() {
 
       <SiteFooter />
     </>
-  );
-}
-
-function CheckMark() {
-  return (
-    <span
-      aria-hidden="true"
-      className="bg-accent-wash text-accent mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full"
-    >
-      <svg
-        viewBox="0 0 24 24"
-        className="size-3.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="m5 12.5 4.5 4.5L19 7.5" />
-      </svg>
-    </span>
   );
 }

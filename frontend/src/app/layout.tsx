@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Rubik } from "next/font/google";
+import { Alexandria, Readex_Pro } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
@@ -8,18 +8,20 @@ import { readLocale, readTheme } from "@/lib/preferences";
 import "./globals.css";
 
 // خطّان يدعمان العربية واللاتينية معًا — فلا يتغيّر إحساس الصفحة عند
-// تبديل اللغة، ولا نحمّل خطًا ثانيًا لكل لغة.
-const plex = IBM_Plex_Sans_Arabic({
+// تبديل اللغة، ولا نحمّل خطًا ثالثًا لكل لغة. Readex Pro مرسوم أصلًا
+// لقراءة طويلة بالعربية، وAlexandria هندسي عريض يعطي العناوين والأرقام
+// نبرة أداة قياس لا نبرة مقال.
+const readex = Readex_Pro({
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-plex",
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-readex",
   display: "swap",
 });
 
-const rubik = Rubik({
+const alexandria = Alexandria({
   subsets: ["arabic", "latin"],
   weight: ["500", "600", "700"],
-  variable: "--font-rubik",
+  variable: "--font-alexandria",
   display: "swap",
 });
 
@@ -34,8 +36,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#14120f" },
+    { media: "(prefers-color-scheme: light)", color: "#f2f4ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1210" },
   ],
 };
 
@@ -49,7 +51,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       lang={locale}
       dir={directionOf(locale)}
       data-theme={theme}
-      className={`${plex.variable} ${rubik.variable}`}
+      className={`${readex.variable} ${alexandria.variable}`}
     >
       <body className="bg-paper text-ink min-h-dvh font-sans antialiased">
         <NextIntlClientProvider locale={locale} timeZone={TIME_ZONE} messages={messages}>
