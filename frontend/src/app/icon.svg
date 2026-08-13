@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!--
+    أيقونة التبويب.
+
+    الألوان مكتوبة هنا صراحةً لا كمتغيّرات: الأيقونة تُرسم خارج الصفحة
+    فلا تصلها متغيّرات `globals.css`. والحرف يتبع مظهر المتصفح نفسه —
+    شريط تبويب داكن كان سيبتلع حرفًا حبريًا.
+  -->
+  <style>
+    .ink { stroke: #131711 }
+    @media (prefers-color-scheme: dark) { .ink { stroke: #eef1e9 } }
+  </style>
+  <path class="ink" d="M37 8H18a4.5 4.5 0 0 0-4.5 4.5V40" stroke-width="6.2"/>
+  <path class="ink" d="M13.5 25.5h9" stroke-width="6.2"/>
+  <path d="M21.5 25.5h3.2l3.4-9.2L32.4 33l2.4-7.5h6.2" stroke="#c2e319" stroke-width="5.6"/>
+</svg>

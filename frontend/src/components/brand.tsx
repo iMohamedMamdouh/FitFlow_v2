@@ -3,34 +3,32 @@ import { cn } from "@/lib/utils";
 /**
  * علامة FitFlow.
  *
- * الرمز أربعة أعمدة متدرّجة الارتفاع داخل مربّع حادّ الزوايا — قراءة
- * مزدوجة مقصودة: قراءات قياس متتابعة، ومنحنى تقدّم صاعد. العمود الأخير
- * وحده بلون الإشارة، فيقرأ كـ"القياس التالي" لا كزينة.
+ * حرف **F** بضربات سميكة ذات نهايات مستديرة، يقطعه نبض قلب ليموني يخرج
+ * من ذراعه الأوسط ويكمل إلى اليمين. القراءتان مقصودتان: الحرف هوية،
+ * والنبض هو ما تقيسه المنصة فعلًا.
  *
- * العلامة مرسومة بـ`currentColor` عدا عمود الإشارة، فتتبع لون النص
- * أينما وُضعت — على الورق الفاتح أو على اللوح الحبري — بلا نسخة ثانية.
+ * الحرف مرسوم بـ`currentColor` والنبض بلون الإشارة: العلامة توضع على
+ * اللوح الحبري الداكن وعلى الورق الفاتح معًا، فتتبع لون النص في الحالتين
+ * بلا نسخة ثانية من الملف، بينما يبقى النبض ليمونيًا في الوضعين.
  */
 export function Logo({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 28 28"
-      className={cn("size-6 sm:size-7", className)}
+      viewBox="0 0 48 48"
+      className={cn("size-7 sm:size-8", className)}
       fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
-      <path d="M1 1h20l6 6v20H1V1Z" fill="currentColor" opacity="0.1" />
+      <path d="M37 8H18a4.5 4.5 0 0 0-4.5 4.5V40" stroke="currentColor" strokeWidth="6.2" />
+      <path d="M13.5 25.5h9" stroke="currentColor" strokeWidth="6.2" />
       <path
-        d="M1 1h20l6 6v20H1V1Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-        opacity="0.5"
+        d="M21.5 25.5h3.2l3.4-9.2L32.4 33l2.4-7.5h6.2"
+        stroke="var(--color-signal)"
+        strokeWidth="5.6"
       />
-      <rect x="6" y="16" width="2.6" height="6" fill="currentColor" />
-      <rect x="10.6" y="12.5" width="2.6" height="9.5" fill="currentColor" />
-      <rect x="15.2" y="14" width="2.6" height="8" fill="currentColor" />
-      <rect x="19.8" y="7" width="2.6" height="15" fill="var(--color-signal)" />
     </svg>
   );
 }
