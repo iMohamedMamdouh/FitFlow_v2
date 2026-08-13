@@ -242,9 +242,9 @@ async def test_patient_sees_the_plan_only_after_activation(
     assert (await client.get("/api/v1/me/plans", headers=headers)).json() == []
 
     await client.post(f"/api/v1/plans/{plan_id}/approve", json={}, headers=reviewer)
-    assert (await client.get("/api/v1/me/plans", headers=headers)).json() == [], (
-        "الاعتماد وحده لا يكفي — التفعيل هو ما يجعلها مرئية"
-    )
+    assert (
+        await client.get("/api/v1/me/plans", headers=headers)
+    ).json() == [], "الاعتماد وحده لا يكفي — التفعيل هو ما يجعلها مرئية"
 
     await client.post(f"/api/v1/plans/{plan_id}/activate", headers=reviewer)
     visible = (await client.get("/api/v1/me/plans", headers=headers)).json()

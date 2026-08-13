@@ -60,9 +60,9 @@ def test_the_engine_package_is_not_empty() -> None:
 def test_engine_module_imports_no_framework(path: Path) -> None:
     for module in _imported_modules(path):
         root = module.split(".")[0]
-        assert root not in FORBIDDEN_ROOTS, (
-            f"{path.name} يستورد {module} — محرك القواعد لا يعتمد على أي إطار"
-        )
+        assert (
+            root not in FORBIDDEN_ROOTS
+        ), f"{path.name} يستورد {module} — محرك القواعد لا يعتمد على أي إطار"
 
 
 @pytest.mark.parametrize("path", ENGINE_FILES, ids=lambda path: path.name)
@@ -71,17 +71,17 @@ def test_engine_module_depends_only_on_pure_internals(path: Path) -> None:
         if not module.startswith("app."):
             continue
         is_internal = module.startswith("app.core.rule_engine")
-        assert is_internal or module in ALLOWED_APP_MODULES, (
-            f"{path.name} يستورد {module} — المسموح: وحدات المحرك و{sorted(ALLOWED_APP_MODULES)}"
-        )
+        assert (
+            is_internal or module in ALLOWED_APP_MODULES
+        ), f"{path.name} يستورد {module} — المسموح: وحدات المحرك و{sorted(ALLOWED_APP_MODULES)}"
 
 
 def test_the_shared_enum_module_is_itself_pure() -> None:
     """اعتماد المحرك على app.core.enums آمن فقط ما دامت هي نقية أيضًا."""
     for module in _imported_modules(ENGINE_DIR.parent / "enums.py"):
-        assert module.split(".")[0] not in FORBIDDEN_ROOTS, (
-            f"app/core/enums.py يستورد {module} — يجب أن تبقى بلا اعتماديات"
-        )
+        assert (
+            module.split(".")[0] not in FORBIDDEN_ROOTS
+        ), f"app/core/enums.py يستورد {module} — يجب أن تبقى بلا اعتماديات"
 
 
 def test_engine_can_be_imported_without_any_framework_installed() -> None:
@@ -104,6 +104,6 @@ def test_engine_can_be_imported_without_any_framework_installed() -> None:
         cwd=str(ENGINE_DIR.parent.parent.parent),
     )
 
-    assert result.stdout.strip() == "", (
-        f"استيراد المحرك حمّل أطرًا غير مسموحة: {result.stdout.strip()}"
-    )
+    assert (
+        result.stdout.strip() == ""
+    ), f"استيراد المحرك حمّل أطرًا غير مسموحة: {result.stdout.strip()}"
