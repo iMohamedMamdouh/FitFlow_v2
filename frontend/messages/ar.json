@@ -345,6 +345,138 @@
       "other": "أخرى"
     }
   },
+  "roles": {
+    "patient": "مريض",
+    "specialist": "أخصائي",
+    "admin": "مدير"
+  },
+  "specialistNav": {
+    "patients": "مرضاي",
+    "review": "قائمة المراجعة"
+  },
+  "specialist": {
+    "patients": {
+      "title": "مرضاي",
+      "subtitle": "مرتّبون بالإلحاح لا بالأبجدية — من يحتاج تدخّلًا اليوم في الأعلى.",
+      "empty": "لا يوجد مرضى مسنَدون لك بعد.",
+      "emptyHint": "الإسناد يديره مدير النظام.",
+      "count": "{count} مريض",
+      "open": "فتح الملف",
+      "noWeight": "لا قياس",
+      "noLog": "لا تسجيل",
+      "lastLog": "آخر تسجيل",
+      "daysAgo": "منذ {days} يوم",
+      "today": "اليوم",
+      "adherence": "الالتزام",
+      "awaiting": "{count} خطة تنتظر المراجعة"
+    },
+    "flags": {
+      "needs_review": "تحتاج مراجعة",
+      "acute_injury": "إصابة حادة",
+      "stalled": "متعثّر",
+      "not_started": "لم يبدأ",
+      "on_track": "منتظم"
+    },
+    "review": {
+      "title": "قائمة المراجعة",
+      "subtitle": "الخطط المنتظرة توقيعك، الأقدم أولًا.",
+      "empty": "لا توجد خطط تنتظر المراجعة.",
+      "emptyHint": "ستظهر هنا فور أن يرسل مريض خطته.",
+      "submittedAt": "أُرسلت في {date}",
+      "open": "مراجعة"
+    },
+    "patient": {
+      "back": "رجوع للقائمة",
+      "overview": "نظرة عامة",
+      "profile": "الملف الشخصي",
+      "injuries": "الإصابات",
+      "readings": "القياسات",
+      "logs": "التسجيل اليومي",
+      "plans": "الخطط",
+      "notes": "الملاحظات",
+      "audit": "سجل التدقيق",
+      "noProfile": "لم يستكمل المريض ملفه الشخصي بعد.",
+      "noInjuries": "لا إصابات مسجَّلة.",
+      "noLogs": "لا تسجيلات يومية.",
+      "noPlans": "لا خطط بعد.",
+      "noNotes": "لا ملاحظات.",
+      "noAudit": "لا أحداث مسجَّلة.",
+      "weightChart": "تطوّر الوزن",
+      "painChart": "مستوى الألم",
+      "adherenceChart": "الالتزام بالخطة الغذائية",
+      "viewedNotice": "اطّلاعك على هذا الملف مسجَّل في سجل التدقيق.",
+      "openPlan": "فتح الخطة"
+    },
+    "plan": {
+      "title": "مراجعة الخطة",
+      "forPatient": "للمريض {name}",
+      "decision": "القرار",
+      "reason": "سبب القرار",
+      "reasonHint": "يُخزَّن في سجل الانتقالات، ويظهر للمريض عند طلب التعديل.",
+      "reasonRequired": "طلب التعديل يحتاج سببًا مكتوبًا.",
+      "approve": "اعتماد",
+      "approving": "جارٍ الاعتماد…",
+      "requestChanges": "طلب تعديل",
+      "requesting": "جارٍ الإرسال…",
+      "activate": "تفعيل للمريض",
+      "activating": "جارٍ التفعيل…",
+      "approved": "اعتُمدت الخطة — فعّلها لتصل المريض.",
+      "changesRequested": "أُعيدت الخطة للمريض مع سبب التعديل.",
+      "activated": "فُعّلت الخطة وأصبحت مرئية للمريض.",
+      "transitions": "سجل الانتقالات",
+      "notVisibleYet": "الخطة غير مرئية للمريض حتى تُفعَّل.",
+      "visibleNow": "الخطة مفعّلة ومرئية للمريض.",
+      "noActions": "لا إجراء متاح على هذه الحالة.",
+      "byActor": "بواسطة {name}",
+      "system": "النظام"
+    },
+    "notes": {
+      "title": "الملاحظات",
+      "add": "إضافة ملاحظة",
+      "placeholder": "ملاحظة سريرية أو رسالة للمريض…",
+      "internal": "ملاحظة داخلية (لا يراها المريض)",
+      "save": "حفظ الملاحظة",
+      "saved": "حُفظت الملاحظة.",
+      "internalBadge": "داخلية"
+    },
+    "audit": {
+      "actor": "الفاعل",
+      "system": "النظام",
+      "subtitle": "كل اطّلاع وكل تغيير حالة — السجل غير قابل للتعديل."
+    }
+  },
+  "auditActions": {
+    "user": {
+      "registered": "تسجيل حساب",
+      "created_by_admin": "إنشاء حساب بواسطة مدير"
+    },
+    "auth": {
+      "login_succeeded": "تسجيل دخول",
+      "login_failed": "محاولة دخول فاشلة",
+      "logout": "تسجيل خروج",
+      "token_refreshed": "تجديد رمز",
+      "token_reuse_detected": "كشف إعادة استخدام رمز"
+    },
+    "profile": {
+      "updated": "تحديث الملف الشخصي",
+      "consent_accepted": "الموافقة على التنبيه الطبي"
+    },
+    "injury": {
+      "recorded": "تسجيل إصابة",
+      "attachment_uploaded": "رفع مرفق طبي"
+    },
+    "plan": {
+      "generated": "توليد خطة",
+      "submitted_for_review": "إرسال خطة للمراجعة",
+      "approved": "اعتماد خطة",
+      "changes_requested": "طلب تعديل خطة",
+      "activated": "تفعيل خطة",
+      "archived": "أرشفة خطة"
+    },
+    "patient": {
+      "record_viewed": "الاطّلاع على سجل مريض"
+    }
+  },
   "landing": {
     "nav": {
       "how": "كيف يعمل",

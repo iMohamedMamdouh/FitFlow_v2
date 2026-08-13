@@ -82,6 +82,73 @@
         "title": "AttachmentType",
         "type": "string"
       },
+      "AuditEntryRead": {
+        "description": "سطر من سجل التدقيق كما يُعرض للأخصائي (الخطوة 8.5).",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "actor_user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor User Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "entity_type": {
+            "title": "Entity Type",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "entity_type",
+          "entity_id",
+          "actor_user_id",
+          "created_at"
+        ],
+        "title": "AuditEntryRead",
+        "type": "object"
+      },
       "BodyRegion": {
         "enum": [
           "shoulder",
@@ -785,6 +852,151 @@
         "title": "NutritionPlanRead",
         "type": "object"
       },
+      "PatientFlag": {
+        "description": "مؤشر حالة المريض في قائمة الأخصائي.\n\nالقائمة المرتّبة أبجديًا عديمة الفائدة لأخصائي عنده ثلاثون مريضًا؛ ما\nيحتاجه هو **من يستدعي تدخّلًا اليوم**. لذلك المؤشرات مرتَّبة بالأولوية\nويُختار أعلاها لكل مريض:\n\n``NEEDS_REVIEW``  خطة تنتظر توقيعه — الوحيد الذي يعطّله شخص آخر\n``ACUTE_INJURY``  إصابة حادة مسجَّلة، وهي تُقدَّم على أي هدف\n``STALLED``       لا تسجيل يومي منذ أسبوع — المتابعة انقطعت\n``NOT_STARTED``   لم يستكمل ملفه أو لم يوافق على التنبيه بعد\n``ON_TRACK``      لا شيء يستدعي تدخّلًا",
+        "enum": [
+          "needs_review",
+          "acute_injury",
+          "stalled",
+          "not_started",
+          "on_track"
+        ],
+        "title": "PatientFlag",
+        "type": "string"
+      },
+      "PatientSummary": {
+        "description": "سطر واحد في قائمة مرضى الأخصائي.\n\nكل ما يحتاجه القرار \"أفتح هذا الملف الآن أم لا\" مجمَّع هنا في استعلام\nواحد. البديل — جلب القائمة ثم نداء لكل مريض — يعني عشرات النداءات\nلعرض شاشة واحدة.",
+        "properties": {
+          "active_injuries": {
+            "title": "Active Injuries",
+            "type": "integer"
+          },
+          "consent_accepted": {
+            "title": "Consent Accepted",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "days_since_last_log": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days Since Last Log"
+          },
+          "diet_adherence_avg": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diet Adherence Avg"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "flag": {
+            "$ref": "#/components/schemas/PatientFlag"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "has_active_plan": {
+            "title": "Has Active Plan",
+            "type": "boolean"
+          },
+          "has_acute_injury": {
+            "title": "Has Acute Injury",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "last_log_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Log Date"
+          },
+          "latest_weight_kg": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Weight Kg"
+          },
+          "plans_awaiting_review": {
+            "title": "Plans Awaiting Review",
+            "type": "integer"
+          },
+          "profile_complete": {
+            "title": "Profile Complete",
+            "type": "boolean"
+          },
+          "weight_change_kg": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight Change Kg"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "is_active",
+          "created_at",
+          "flag",
+          "plans_awaiting_review",
+          "has_active_plan",
+          "active_injuries",
+          "has_acute_injury",
+          "profile_complete",
+          "consent_accepted",
+          "latest_weight_kg",
+          "weight_change_kg",
+          "last_log_date",
+          "days_since_last_log",
+          "diet_adherence_avg"
+        ],
+        "title": "PatientSummary",
+        "type": "object"
+      },
       "PlanGenerateRequest": {
         "description": "طلب توليد خطة.\n\nلا يحتوي حقل ``status``: الخطة المولَّدة تبدأ ``draft`` دائمًا. السماح\nبتحديد الحالة عند الإنشاء يفتح طريقًا لخطة تصل المريض بلا مراجعة.",
         "properties": {
@@ -1445,6 +1657,95 @@
           "full_name"
         ],
         "title": "RegisterRequest",
+        "type": "object"
+      },
+      "SpecialistNoteCreate": {
+        "description": "ملاحظة على مريض.\n\nالحقول في الجسم لا في الـ query string: ملاحظة سريرية قد تكون فقرة\nكاملة، ووضعها في الرابط يعني ظهورها في سجلات الخادم وفي تاريخ\nالمتصفح — وهي بيانات مريض.",
+        "properties": {
+          "is_internal": {
+            "default": false,
+            "title": "Is Internal",
+            "type": "boolean"
+          },
+          "note": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Note",
+            "type": "string"
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "title": "SpecialistNoteCreate",
+        "type": "object"
+      },
+      "SpecialistNoteRead": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_internal": {
+            "title": "Is Internal",
+            "type": "boolean"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "plan_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Id"
+          },
+          "specialist_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specialist Id"
+          }
+        },
+        "required": [
+          "id",
+          "specialist_id",
+          "plan_id",
+          "note",
+          "is_internal",
+          "created_at"
+        ],
+        "title": "SpecialistNoteRead",
         "type": "object"
       },
       "TokenPair": {
@@ -2847,6 +3148,7 @@
     },
     "/api/v1/specialist/patients": {
       "get": {
+        "description": "قائمة المرضى مع مؤشرات الحالة (الخطوة 8.1).",
         "operationId": "list_my_patients_api_v1_specialist_patients_get",
         "responses": {
           "200": {
@@ -2854,7 +3156,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/UserPublic"
+                    "$ref": "#/components/schemas/PatientSummary"
                   },
                   "title": "Response List My Patients Api V1 Specialist Patients Get",
                   "type": "array"
@@ -2870,6 +3172,69 @@
           }
         ],
         "summary": "List My Patients",
+        "tags": [
+          "specialist"
+        ]
+      }
+    },
+    "/api/v1/specialist/patients/{patient_id}/audit": {
+      "get": {
+        "description": "سجل التدقيق الخاص بمريض (الخطوة 8.5).\n\nالقيد يخص المريض إن كان **فاعله** (سجّل إصابة، وافق على التنبيه)، أو\n**هدفه** (اطّلع أخصائي على سجله)، أو كان على **خطة من خططه** (اعتماد،\nطلب تعديل، تفعيل). الحالة الثالثة هي أهمّ ما يريده الأخصائي وأكثر ما\nيسهل نسيانه: فاعلها أخصائي وهدفها خطة، فلا يظهر فيها معرّف المريض\nإطلاقًا.",
+        "operationId": "read_patient_audit_api_v1_specialist_patients__patient_id__audit_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "patient_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Patient Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntryRead"
+                  },
+                  "title": "Response Read Patient Audit Api V1 Specialist Patients  Patient Id  Audit Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Patient Audit",
         "tags": [
           "specialist"
         ]
@@ -2927,9 +3292,10 @@
         ]
       }
     },
-    "/api/v1/specialist/patients/{patient_id}/notes": {
-      "post": {
-        "operationId": "add_patient_note_api_v1_specialist_patients__patient_id__notes_post",
+    "/api/v1/specialist/patients/{patient_id}/logs": {
+      "get": {
+        "description": "التسجيل اليومي — مصدر قراءة الالتزام والألم على المدى.",
+        "operationId": "read_patient_logs_api_v1_specialist_patients__patient_id__logs_get",
         "parameters": [
           {
             "in": "path",
@@ -2943,29 +3309,134 @@
           },
           {
             "in": "query",
-            "name": "note",
-            "required": true,
-            "schema": {
-              "title": "Note",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "is_internal",
+            "name": "limit",
             "required": false,
             "schema": {
-              "default": false,
-              "title": "Is Internal",
-              "type": "boolean"
+              "default": 90,
+              "title": "Limit",
+              "type": "integer"
             }
           }
         ],
         "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DailyLogRead"
+                  },
+                  "title": "Response Read Patient Logs Api V1 Specialist Patients  Patient Id  Logs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Patient Logs",
+        "tags": [
+          "specialist"
+        ]
+      }
+    },
+    "/api/v1/specialist/patients/{patient_id}/notes": {
+      "get": {
+        "operationId": "read_patient_notes_api_v1_specialist_patients__patient_id__notes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "patient_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Patient Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialistNoteRead"
+                  },
+                  "title": "Response Read Patient Notes Api V1 Specialist Patients  Patient Id  Notes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Patient Notes",
+        "tags": [
+          "specialist"
+        ]
+      },
+      "post": {
+        "operationId": "add_patient_note_api_v1_specialist_patients__patient_id__notes_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "patient_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Patient Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpecialistNoteCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
           "201": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/SpecialistNoteRead"
+                }
               }
             },
             "description": "Successful Response"
@@ -3040,6 +3511,54 @@
           }
         ],
         "summary": "Read Patient Plans",
+        "tags": [
+          "specialist"
+        ]
+      }
+    },
+    "/api/v1/specialist/patients/{patient_id}/profile": {
+      "get": {
+        "operationId": "read_patient_profile_api_v1_specialist_patients__patient_id__profile_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "patient_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Patient Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Patient Profile",
         "tags": [
           "specialist"
         ]

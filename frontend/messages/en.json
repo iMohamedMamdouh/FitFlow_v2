@@ -345,6 +345,138 @@
       "other": "Other"
     }
   },
+  "roles": {
+    "patient": "Patient",
+    "specialist": "Specialist",
+    "admin": "Admin"
+  },
+  "specialistNav": {
+    "patients": "My patients",
+    "review": "Review queue"
+  },
+  "specialist": {
+    "patients": {
+      "title": "My patients",
+      "subtitle": "Ordered by urgency, not alphabetically — whoever needs attention today is at the top.",
+      "empty": "No patients are assigned to you yet.",
+      "emptyHint": "Assignment is managed by a system administrator.",
+      "count": "{count} patients",
+      "open": "Open record",
+      "noWeight": "No reading",
+      "noLog": "No entries",
+      "lastLog": "Last entry",
+      "daysAgo": "{days} days ago",
+      "today": "Today",
+      "adherence": "Adherence",
+      "awaiting": "{count} plan(s) awaiting review"
+    },
+    "flags": {
+      "needs_review": "Needs review",
+      "acute_injury": "Acute injury",
+      "stalled": "Stalled",
+      "not_started": "Not started",
+      "on_track": "On track"
+    },
+    "review": {
+      "title": "Review queue",
+      "subtitle": "Plans waiting for your sign-off, oldest first.",
+      "empty": "No plans are waiting for review.",
+      "emptyHint": "They appear here as soon as a patient submits one.",
+      "submittedAt": "Submitted {date}",
+      "open": "Review"
+    },
+    "patient": {
+      "back": "Back to list",
+      "overview": "Overview",
+      "profile": "Profile",
+      "injuries": "Injuries",
+      "readings": "Measurements",
+      "logs": "Daily log",
+      "plans": "Plans",
+      "notes": "Notes",
+      "audit": "Audit trail",
+      "noProfile": "This patient has not completed their profile yet.",
+      "noInjuries": "No injuries recorded.",
+      "noLogs": "No daily entries.",
+      "noPlans": "No plans yet.",
+      "noNotes": "No notes.",
+      "noAudit": "No recorded events.",
+      "weightChart": "Weight over time",
+      "painChart": "Pain level",
+      "adherenceChart": "Diet adherence",
+      "viewedNotice": "Your access to this record is written to the audit trail.",
+      "openPlan": "Open plan"
+    },
+    "plan": {
+      "title": "Plan review",
+      "forPatient": "For {name}",
+      "decision": "Decision",
+      "reason": "Reason",
+      "reasonHint": "Stored in the transition log, and shown to the patient when changes are requested.",
+      "reasonRequired": "Requesting changes needs a written reason.",
+      "approve": "Approve",
+      "approving": "Approving…",
+      "requestChanges": "Request changes",
+      "requesting": "Sending…",
+      "activate": "Activate for patient",
+      "activating": "Activating…",
+      "approved": "Plan approved — activate it to reach the patient.",
+      "changesRequested": "Plan returned to the patient with your reason.",
+      "activated": "Plan activated and now visible to the patient.",
+      "transitions": "Transition log",
+      "notVisibleYet": "This plan is not visible to the patient until it is activated.",
+      "visibleNow": "This plan is active and visible to the patient.",
+      "noActions": "No action is available in this state.",
+      "byActor": "by {name}",
+      "system": "System"
+    },
+    "notes": {
+      "title": "Notes",
+      "add": "Add a note",
+      "placeholder": "Clinical note or a message for the patient…",
+      "internal": "Internal note (not shown to the patient)",
+      "save": "Save note",
+      "saved": "Note saved.",
+      "internalBadge": "Internal"
+    },
+    "audit": {
+      "actor": "Actor",
+      "system": "System",
+      "subtitle": "Every view and every status change — the log cannot be edited."
+    }
+  },
+  "auditActions": {
+    "user": {
+      "registered": "Account registered",
+      "created_by_admin": "Account created by admin"
+    },
+    "auth": {
+      "login_succeeded": "Logged in",
+      "login_failed": "Failed login attempt",
+      "logout": "Logged out",
+      "token_refreshed": "Token refreshed",
+      "token_reuse_detected": "Token reuse detected"
+    },
+    "profile": {
+      "updated": "Profile updated",
+      "consent_accepted": "Medical notice accepted"
+    },
+    "injury": {
+      "recorded": "Injury recorded",
+      "attachment_uploaded": "Medical attachment uploaded"
+    },
+    "plan": {
+      "generated": "Plan generated",
+      "submitted_for_review": "Plan submitted for review",
+      "approved": "Plan approved",
+      "changes_requested": "Changes requested",
+      "activated": "Plan activated",
+      "archived": "Plan archived"
+    },
+    "patient": {
+      "record_viewed": "Patient record viewed"
+    }
+  },
   "landing": {
     "nav": {
       "how": "How it works",

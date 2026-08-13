@@ -410,8 +410,37 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List My Patients */
+        /**
+         * List My Patients
+         * @description قائمة المرضى مع مؤشرات الحالة (الخطوة 8.1).
+         */
         get: operations["list_my_patients_api_v1_specialist_patients_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/specialist/patients/{patient_id}/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Patient Audit
+         * @description سجل التدقيق الخاص بمريض (الخطوة 8.5).
+         *
+         *     القيد يخص المريض إن كان **فاعله** (سجّل إصابة، وافق على التنبيه)، أو
+         *     **هدفه** (اطّلع أخصائي على سجله)، أو كان على **خطة من خططه** (اعتماد،
+         *     طلب تعديل، تفعيل). الحالة الثالثة هي أهمّ ما يريده الأخصائي وأكثر ما
+         *     يسهل نسيانه: فاعلها أخصائي وهدفها خطة، فلا يظهر فيها معرّف المريض
+         *     إطلاقًا.
+         */
+        get: operations["read_patient_audit_api_v1_specialist_patients__patient_id__audit_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -437,6 +466,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/specialist/patients/{patient_id}/logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Patient Logs
+         * @description التسجيل اليومي — مصدر قراءة الالتزام والألم على المدى.
+         */
+        get: operations["read_patient_logs_api_v1_specialist_patients__patient_id__logs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/specialist/patients/{patient_id}/notes": {
         parameters: {
             query?: never;
@@ -444,7 +493,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read Patient Notes */
+        get: operations["read_patient_notes_api_v1_specialist_patients__patient_id__notes_get"];
         put?: never;
         /** Add Patient Note */
         post: operations["add_patient_note_api_v1_specialist_patients__patient_id__notes_post"];
@@ -466,6 +516,23 @@ export interface paths {
          * @description كل خطط المريض — بما فيها المسودات، فهي مادة المراجعة.
          */
         get: operations["read_patient_plans_api_v1_specialist_patients__patient_id__plans_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/specialist/patients/{patient_id}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Patient Profile */
+        get: operations["read_patient_profile_api_v1_specialist_patients__patient_id__profile_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -614,6 +681,32 @@ export interface components {
          * @enum {string}
          */
         AttachmentType: "xray" | "mri" | "ct_scan" | "ultrasound" | "report" | "photo" | "other";
+        /**
+         * AuditEntryRead
+         * @description سطر من سجل التدقيق كما يُعرض للأخصائي (الخطوة 8.5).
+         */
+        AuditEntryRead: {
+            /** Action */
+            action: string;
+            /** Actor Name */
+            actor_name?: string | null;
+            /** Actor User Id */
+            actor_user_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Entity Id */
+            entity_id: string | null;
+            /** Entity Type */
+            entity_type: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+        };
         /**
          * BodyRegion
          * @enum {string}
@@ -892,6 +985,71 @@ export interface components {
             protein_g: string;
         };
         /**
+         * PatientFlag
+         * @description مؤشر حالة المريض في قائمة الأخصائي.
+         *
+         *     القائمة المرتّبة أبجديًا عديمة الفائدة لأخصائي عنده ثلاثون مريضًا؛ ما
+         *     يحتاجه هو **من يستدعي تدخّلًا اليوم**. لذلك المؤشرات مرتَّبة بالأولوية
+         *     ويُختار أعلاها لكل مريض:
+         *
+         *     ``NEEDS_REVIEW``  خطة تنتظر توقيعه — الوحيد الذي يعطّله شخص آخر
+         *     ``ACUTE_INJURY``  إصابة حادة مسجَّلة، وهي تُقدَّم على أي هدف
+         *     ``STALLED``       لا تسجيل يومي منذ أسبوع — المتابعة انقطعت
+         *     ``NOT_STARTED``   لم يستكمل ملفه أو لم يوافق على التنبيه بعد
+         *     ``ON_TRACK``      لا شيء يستدعي تدخّلًا
+         * @enum {string}
+         */
+        PatientFlag: "needs_review" | "acute_injury" | "stalled" | "not_started" | "on_track";
+        /**
+         * PatientSummary
+         * @description سطر واحد في قائمة مرضى الأخصائي.
+         *
+         *     كل ما يحتاجه القرار "أفتح هذا الملف الآن أم لا" مجمَّع هنا في استعلام
+         *     واحد. البديل — جلب القائمة ثم نداء لكل مريض — يعني عشرات النداءات
+         *     لعرض شاشة واحدة.
+         */
+        PatientSummary: {
+            /** Active Injuries */
+            active_injuries: number;
+            /** Consent Accepted */
+            consent_accepted: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Days Since Last Log */
+            days_since_last_log: number | null;
+            /** Diet Adherence Avg */
+            diet_adherence_avg: number | null;
+            /** Email */
+            email: string;
+            flag: components["schemas"]["PatientFlag"];
+            /** Full Name */
+            full_name: string;
+            /** Has Active Plan */
+            has_active_plan: boolean;
+            /** Has Acute Injury */
+            has_acute_injury: boolean;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Last Log Date */
+            last_log_date: string | null;
+            /** Latest Weight Kg */
+            latest_weight_kg: string | null;
+            /** Plans Awaiting Review */
+            plans_awaiting_review: number;
+            /** Profile Complete */
+            profile_complete: boolean;
+            /** Weight Change Kg */
+            weight_change_kg: string | null;
+        };
+        /**
          * PlanGenerateRequest
          * @description طلب توليد خطة.
          *
@@ -1141,6 +1299,46 @@ export interface components {
             full_name: string;
             /** Password */
             password: string;
+        };
+        /**
+         * SpecialistNoteCreate
+         * @description ملاحظة على مريض.
+         *
+         *     الحقول في الجسم لا في الـ query string: ملاحظة سريرية قد تكون فقرة
+         *     كاملة، ووضعها في الرابط يعني ظهورها في سجلات الخادم وفي تاريخ
+         *     المتصفح — وهي بيانات مريض.
+         */
+        SpecialistNoteCreate: {
+            /**
+             * Is Internal
+             * @default false
+             */
+            is_internal: boolean;
+            /** Note */
+            note: string;
+            /** Plan Id */
+            plan_id?: string | null;
+        };
+        /** SpecialistNoteRead */
+        SpecialistNoteRead: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Internal */
+            is_internal: boolean;
+            /** Note */
+            note: string;
+            /** Plan Id */
+            plan_id: string | null;
+            /** Specialist Id */
+            specialist_id: string | null;
         };
         /** TokenPair */
         TokenPair: {
@@ -2059,7 +2257,40 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserPublic"][];
+                    "application/json": components["schemas"]["PatientSummary"][];
+                };
+            };
+        };
+    };
+    read_patient_audit_api_v1_specialist_patients__patient_id__audit_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditEntryRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2095,11 +2326,10 @@ export interface operations {
             };
         };
     };
-    add_patient_note_api_v1_specialist_patients__patient_id__notes_post: {
+    read_patient_logs_api_v1_specialist_patients__patient_id__logs_get: {
         parameters: {
-            query: {
-                note: string;
-                is_internal?: boolean;
+            query?: {
+                limit?: number;
             };
             header?: never;
             path: {
@@ -2110,12 +2340,78 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyLogRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_patient_notes_api_v1_specialist_patients__patient_id__notes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpecialistNoteRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_patient_note_api_v1_specialist_patients__patient_id__notes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpecialistNoteCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["SpecialistNoteRead"];
                 };
             };
             /** @description Validation Error */
@@ -2147,6 +2443,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_patient_profile_api_v1_specialist_patients__patient_id__profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patient_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileRead"];
                 };
             };
             /** @description Validation Error */

@@ -1,12 +1,33 @@
-import { AppShell } from "@/components/app-shell";
+import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+
+import { Shell } from "@/components/shell";
+import { getCurrentUser } from "@/lib/api/queries";
+import { homeForRole } from "@/lib/auth/roles";
+
+const LINKS = [
+  { href: "/dashboard", key: "dashboard" },
+  { href: "/plan", key: "plan" },
+  { href: "/log", key: "log" },
+  { href: "/injuries", key: "injuries" },
+  { href: "/profile", key: "profile" },
+] as const;
 
 /**
- * كل ما تحت هذه المجموعة يتطلب جلسة.
+ * مساحة المريض.
  *
- * الحماية الفعلية في `src/proxy.ts` (اصطلاح Next 16 لما كان اسمه
- * middleware): يعيد التوجيه قبل أي render. وهذا التخطيط يفترض وجود
- * الجلسة ويبني الهيكل حولها.
+ * الحماية على مستويين: `src/proxy.ts` يمنع غير المسجّلين قبل أي render،
+ * وهذا التخطيط يمنع **الدور الخطأ** — أخصائي يفتح `/dashboard` يُحوَّل
+ * لمساحته بدل أن يرى شاشة تطلب منه استكمال ملف مريض.
  */
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return <AppShell>{children}</AppShell>;
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const [user, nav] = await Promise.all([getCurrentUser(), getTranslations("nav")]);
+  if (user.role !== "patient") redirect(homeForRole(user.role));
+
+  const links = LINKS.map((link) => ({ href: link.href, label: nav(link.key) }));
+  return (
+    <Shell user={user} links={links} home="/dashboard">
+      {children}
+    </Shell>
+  );
 }

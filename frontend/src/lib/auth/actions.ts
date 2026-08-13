@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { apiFetch } from "@/lib/api/server";
 import { ApiError, toApiError } from "@/lib/api/errors";
 import type { TokenPair, UserPublic } from "@/lib/api/schema";
+import { homeForRole } from "@/lib/auth/roles";
 import { clearSession, readRefreshToken, saveSession } from "@/lib/auth/session";
 import type { AuthState } from "@/lib/auth/state";
 
@@ -16,10 +17,15 @@ import type { AuthState } from "@/lib/auth/state";
  * يصل الرمز إلى المتصفح إلا داخل كوكي `httpOnly` لا يقرؤه JavaScript.
  */
 
-/** المسار التالي يُقبل فقط لو داخليًا — قيمة من الرابط لا يجوز أن تصبح تحويلًا لموقع آخر. */
-function safeNext(value: FormDataEntryValue | null): string {
-  if (typeof value !== "string") return "/dashboard";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/dashboard";
+/**
+ * المسار التالي بعد الدخول.
+ *
+ * قيمة من الرابط لا يجوز أن تصبح تحويلًا لموقع آخر، فيُقبل الداخلي فقط.
+ * وبغيابها تختلف الوجهة بالدور: المريض للوحته والأخصائي لقائمة مرضاه.
+ */
+function safeNext(value: FormDataEntryValue | null, fallback: string): string {
+  if (typeof value !== "string") return fallback;
+  if (!value.startsWith("/") || value.startsWith("//")) return fallback;
   return value;
 }
 
@@ -37,7 +43,7 @@ async function messageFor(error: ApiError): Promise<string> {
 export async function loginAction(_state: AuthState, form: FormData): Promise<AuthState> {
   const email = text(form, "email");
   const password = text(form, "password");
-  const next = safeNext(form.get("next"));
+  let next: string;
 
   try {
     const tokens = await apiFetch<TokenPair>("/auth/login", {
@@ -46,6 +52,8 @@ export async function loginAction(_state: AuthState, form: FormData): Promise<Au
       anonymous: true,
     });
     await saveSession(tokens);
+    const user = await apiFetch<UserPublic>("/users/me");
+    next = safeNext(form.get("next"), homeForRole(user.role));
   } catch (error) {
     const apiError = toApiError(error);
     if (apiError.status === 401) {
@@ -85,7 +93,7 @@ export async function registerAction(_state: AuthState, form: FormData): Promise
     return { error: await messageFor(apiError) };
   }
 
-  // التسجيل ينتهي دائمًا عند التنبيه الطبي: لا خطوة أخرى قبل الموافقة.
+  // التسجيل العام يُنشئ مريضًا دائمًا، ورحلته تبدأ بالملف الشخصي.
   redirect("/onboarding");
 }
 

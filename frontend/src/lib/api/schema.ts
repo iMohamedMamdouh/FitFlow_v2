@@ -16,6 +16,7 @@ import type { components } from "./generated";
 type Schemas = components["schemas"];
 
 export type ActivityLevel = Schemas["ActivityLevel"];
+export type AuditEntryRead = Schemas["AuditEntryRead"];
 export type Allergen = Schemas["Allergen"];
 export type AttachmentRead = Schemas["AttachmentRead"];
 export type BodyRegion = Schemas["InjuryTypeRead"]["body_region"];
@@ -34,11 +35,14 @@ export type PlanRead = Schemas["PlanRead"];
 export type PlanStatus = Schemas["PlanStatus"];
 export type PlanSummary = Schemas["PlanSummary"];
 export type PlanTransitionRead = Schemas["PlanTransitionRead"];
+export type PatientFlag = Schemas["PatientFlag"];
+export type PatientSummary = Schemas["PatientSummary"];
 export type PlanType = Schemas["PlanType"];
 export type ProfileRead = Schemas["ProfileRead"];
 export type ProfileUpsert = Schemas["ProfileUpsert"];
 export type ReadingCreate = Schemas["ReadingCreate"];
 export type ReadingRead = Schemas["ReadingRead"];
+export type SpecialistNoteRead = Schemas["SpecialistNoteRead"];
 export type TokenPair = Schemas["TokenPair"];
 export type UserPublic = Schemas["UserPublic"];
 export type UserRole = Schemas["UserRole"];
@@ -92,6 +96,15 @@ export const BODY_SIDES = [
   "right",
   "bilateral",
 ] as const satisfies readonly BodySide[];
+
+/** ترتيب الإلحاح — نفس ترتيب `PatientFlag` في الخادم. */
+export const PATIENT_FLAGS = [
+  "needs_review",
+  "acute_injury",
+  "stalled",
+  "not_started",
+  "on_track",
+] as const satisfies readonly PatientFlag[];
 
 export const MEAL_ORDER = [
   "breakfast",
