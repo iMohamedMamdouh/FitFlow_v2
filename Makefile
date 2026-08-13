@@ -89,7 +89,15 @@ demo-review: ## [تطوير محلي] محاكاة اعتماد الأخصائي
 ifndef email
 	$(error استخدم: make demo-review email=patient@example.com)
 endif
-	cd $(BACKEND) && .venv/bin/python -m app.cli.demo_review "$(email)"
+	@# يشتغل في المسارين: داخل الحاوية لو الخدمة شغّالة، وإلا من الـ venv.
+	@if [ -n "$(COMPOSE)" ] && $(COMPOSE) ps --status running backend 2>/dev/null | grep -q backend; then \
+		$(COMPOSE) exec backend python -m app.cli.demo_review "$(email)"; \
+	elif [ -x $(VENV)/python ]; then \
+		cd $(BACKEND) && .venv/bin/python -m app.cli.demo_review "$(email)"; \
+	else \
+		echo "✗ لا الباك اند شغّال في Docker ولا الـ venv مجهّز — شغّل make up أو make setup"; \
+		exit 1; \
+	fi
 
 .PHONY: openapi
 openapi: ## تصدير مواصفة OpenAPI وتوليد أنواع الواجهة منها
