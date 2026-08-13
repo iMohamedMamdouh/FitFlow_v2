@@ -7,11 +7,12 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, timedelta
+from datetime import timedelta
 
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.clock import today
 from app.core.security import hash_password
 from app.models.clinical import DailyLog, Injury
 from app.models.user import User, UserRole
@@ -20,7 +21,7 @@ from tests.conftest import TEST_PASSWORD, SessionFactory, login
 from tests.test_attachments import make_injury_type
 from tests.test_plan_workflow import assign_specialist, onboard_patient
 
-TODAY = date.today()
+TODAY = today()
 
 
 async def make_patient(email: str, *, full_name: str = "مريض") -> User:

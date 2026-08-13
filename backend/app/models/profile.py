@@ -12,6 +12,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.clock import today
 from app.models.base import Base, TimestampMixin
 from app.models.enums import ActivityLevel, Allergen, Gender, Goal, pg_enum
 
@@ -64,7 +65,7 @@ class UserProfile(Base, TimestampMixin):
 
     __table_args__ = (
         CheckConstraint("height_cm BETWEEN 50 AND 260", name="height_within_human_range"),
-        CheckConstraint("birth_date <= CURRENT_DATE", name="birth_date_not_in_future"),
+        CheckConstraint("birth_date <= CURRENT_DATE + 1", name="birth_date_not_in_future"),
         CheckConstraint(
             "birth_date >= CURRENT_DATE - INTERVAL '120 years'",
             name="birth_date_within_120_years",
@@ -74,9 +75,9 @@ class UserProfile(Base, TimestampMixin):
     @property
     def age_years(self) -> int:
         """العمر محسوبًا لحظة القراءة — لا يتقادم."""
-        today = date.today()
-        had_birthday = (today.month, today.day) >= (self.birth_date.month, self.birth_date.day)
-        return today.year - self.birth_date.year - (0 if had_birthday else 1)
+        now = today()
+        had_birthday = (now.month, now.day) >= (self.birth_date.month, self.birth_date.day)
+        return now.year - self.birth_date.year - (0 if had_birthday else 1)
 
     @property
     def has_accepted_disclaimer(self) -> bool:

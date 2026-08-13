@@ -9,6 +9,7 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.core.clock import today
 from app.core.enums import (
     ActivityLevel,
     Allergen,
@@ -27,7 +28,8 @@ Percentage = Annotated[int, Field(ge=0, le=100)]
 
 
 def _reject_future(value: date, label: str) -> date:
-    if value > date.today():
+    # تاريخ اليوم بتوقيت المنصة لا بتوقيت الخادم — انظر ``app.core.clock``.
+    if value > today():
         raise ValueError(f"{label} لا يمكن أن يكون في المستقبل")
     return value
 
@@ -55,7 +57,7 @@ class ProfileUpsert(BaseModel):
     @classmethod
     def _birth_date_is_plausible(cls, value: date) -> date:
         _reject_future(value, "تاريخ الميلاد")
-        if value.year < date.today().year - 120:
+        if value.year < today().year - 120:
             raise ValueError("تاريخ الميلاد غير منطقي")
         return value
 

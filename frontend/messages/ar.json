@@ -343,6 +343,31 @@
       "report": "تقرير طبي",
       "photo": "صورة",
       "other": "أخرى"
+    },
+    "foodCategory": {
+      "grains": "حبوب",
+      "protein": "بروتين",
+      "dairy": "ألبان",
+      "vegetables": "خضروات",
+      "fruits": "فواكه",
+      "legumes": "بقوليات",
+      "fats": "دهون",
+      "beverages": "مشروبات",
+      "sweets": "حلويات",
+      "other": "أخرى"
+    },
+    "exerciseCategory": {
+      "strength": "قوة",
+      "mobility": "مدى حركة",
+      "stability": "ثبات",
+      "balance": "توازن",
+      "cardio": "هوائي",
+      "stretching": "إطالة"
+    },
+    "exerciseDifficulty": {
+      "beginner": "مبتدئ",
+      "intermediate": "متوسط",
+      "advanced": "متقدّم"
     }
   },
   "roles": {
@@ -576,7 +601,8 @@
   "adminNav": {
     "overview": "نظرة عامة",
     "users": "المستخدمون",
-    "assignments": "الإسناد"
+    "assignments": "الإسناد",
+    "catalog": "القاعدة العلمية"
   },
   "admin": {
     "overview": {
@@ -651,6 +677,72 @@
       "emptyForSpecialist": "لا مرضى مسنَدون لهذا الأخصائي.",
       "unassignedPatients": "مرضى بلا أخصائي",
       "allAssigned": "كل المرضى مسنَدون."
+    },
+    "catalog": {
+      "title": "القاعدة العلمية",
+      "subtitle": "ما يبني عليه المحرك خططه. التعديل هنا يغيّر ما يصل المرضى.",
+      "foods": "الأغذية",
+      "exercises": "التمارين",
+      "injuries": "أنواع الإصابات",
+      "search": "بحث",
+      "searchPlaceholder": "اسم عربي أو إنجليزي",
+      "filterCategory": "التصنيف",
+      "filterRegion": "المنطقة",
+      "filterStatus": "الحالة",
+      "all": "الكل",
+      "onlyActive": "المفعَّل",
+      "onlyDisabled": "المعطَّل",
+      "onlyUnreviewed": "بلا مراجعة",
+      "apply": "تصفية",
+      "reset": "إلغاء التصفية",
+      "empty": "لا توجد عناصر بهذه المواصفات.",
+      "count": "{count} عنصر",
+      "edit": "تعديل",
+      "addNew": "إضافة عنصر جديد",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…",
+      "saved": "حُفظ التعديل.",
+      "created": "أُضيف العنصر.",
+      "disabled": "معطَّل",
+      "active": "مفعَّل",
+      "isActive": "مفعَّل (يظهر للمرضى وللمحرك)",
+      "noDelete": "لا يوجد حذف: الخطط المولَّدة تشير إلى هذا المحتوى، والتعطيل يخفيه دون أن يكسرها.",
+      "nameAr": "الاسم بالعربية",
+      "nameEn": "الاسم بالإنجليزية",
+      "slug": "المعرّف النصي",
+      "slugHint": "حروف لاتينية صغيرة وأرقام وشرطات فقط — يظهر في الروابط.",
+      "calories": "سعرات / 100 جم",
+      "protein": "بروتين (جم)",
+      "carbs": "كربوهيدرات (جم)",
+      "fat": "دهون (جم)",
+      "fiber": "ألياف (جم)",
+      "allergens": "مسبّبات الحساسية",
+      "category": "التصنيف",
+      "difficulty": "المستوى",
+      "region": "المنطقة الأساسية",
+      "targetMuscles": "العضلات المستهدَفة",
+      "equipment": "الأدوات",
+      "listHint": "افصل بفاصلة.",
+      "instructions": "طريقة الأداء",
+      "videoUrl": "رابط فيديو",
+      "description": "الوصف",
+      "phases": "مراحل التأهيل (JSON)",
+      "phasesHint": "مصفوفة مراحل: رقم المرحلة واسمها وأهدافها ومعايير الانتقال ومدتها التقريبية.",
+      "phasesInvalid": "المراحل ليست JSON صالحًا — يجب أن تكون مصفوفة كائنات.",
+      "version": "الإصدار {version}",
+      "versionHint": "يزيد مع تغيير المضمون العلمي فقط — الخطة تُختم بالإصدار الذي بُنيت عليه.",
+      "reviewed": "مراجَع",
+      "unreviewed": "بلا مراجعة",
+      "reviewTitle": "توثيق المراجعة العلمية",
+      "reviewHint": "ADR-003: المحتوى الذي يدخل التوليد يحتاج مختصًا يوقّع عليه ومرجعًا يمكن الرجوع إليه.",
+      "reviewedBy": "المراجِع",
+      "reviewedByPlaceholder": "الاسم والصفة",
+      "sourceReference": "المرجع",
+      "sourceReferencePlaceholder": "دورية، دليل إرشادي، أو رابط",
+      "reviewedAt": "روجع في {date}",
+      "recordReview": "تسجيل المراجعة",
+      "recording": "جارٍ التسجيل…",
+      "reviewSaved": "سُجّلت المراجعة."
     }
   }
 }

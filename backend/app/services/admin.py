@@ -8,12 +8,13 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, timedelta
+from datetime import timedelta
 
 from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
+from app.core.clock import today
 from app.core.enums import InjuryStatus, PlanStatus
 from app.models.care_team import SpecialistPatient
 from app.models.catalog import Exercise, Food, InjuryType
@@ -174,7 +175,7 @@ async def build_platform_stats(session: AsyncSession) -> PlatformStats:
     )
     injury_counts: dict[InjuryStatus, int] = dict(injury_rows.all())  # type: ignore[arg-type]
 
-    since = date.today() - timedelta(days=ACTIVITY_WINDOW_DAYS)
+    since = today() - timedelta(days=ACTIVITY_WINDOW_DAYS)
     logs = await session.scalar(
         select(func.count()).select_from(DailyLog).where(DailyLog.log_date >= since)
     )

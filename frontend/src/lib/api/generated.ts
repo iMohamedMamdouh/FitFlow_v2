@@ -51,6 +51,145 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/catalog/exercises": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Exercises */
+        get: operations["list_exercises_api_v1_admin_catalog_exercises_get"];
+        put?: never;
+        /** Create Exercise */
+        post: operations["create_exercise_api_v1_admin_catalog_exercises_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/exercises/{exercise_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Exercise */
+        patch: operations["update_exercise_api_v1_admin_catalog_exercises__exercise_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/exercises/{exercise_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Exercise */
+        post: operations["review_exercise_api_v1_admin_catalog_exercises__exercise_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/foods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Foods */
+        get: operations["list_foods_api_v1_admin_catalog_foods_get"];
+        put?: never;
+        /** Create Food */
+        post: operations["create_food_api_v1_admin_catalog_foods_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/foods/{food_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Food */
+        patch: operations["update_food_api_v1_admin_catalog_foods__food_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/injury-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Injury Types */
+        get: operations["list_injury_types_api_v1_admin_catalog_injury_types_get"];
+        put?: never;
+        /** Create Injury Type */
+        post: operations["create_injury_type_api_v1_admin_catalog_injury_types_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/injury-types/{injury_type_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Injury Type */
+        patch: operations["update_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/injury-types/{injury_type_id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Review Injury Type */
+        post: operations["review_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__review_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/stats": {
         parameters: {
             query?: never;
@@ -959,6 +1098,131 @@ export interface components {
             redis: "ok" | "error";
         };
         /**
+         * ExerciseCategory
+         * @enum {string}
+         */
+        ExerciseCategory: "strength" | "mobility" | "stability" | "balance" | "cardio" | "stretching";
+        /**
+         * ExerciseDifficulty
+         * @enum {string}
+         */
+        ExerciseDifficulty: "beginner" | "intermediate" | "advanced";
+        /** ExerciseRow */
+        ExerciseRow: {
+            category: components["schemas"]["ExerciseCategory"];
+            difficulty: components["schemas"]["ExerciseDifficulty"];
+            /** Equipment */
+            equipment: string[];
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Instructions Ar */
+            instructions_ar: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en: string | null;
+            primary_region: components["schemas"]["BodyRegion"];
+            review: components["schemas"]["ReviewState"];
+            /** Slug */
+            slug: string;
+            /** Target Muscles */
+            target_muscles: string[];
+            /** Video Url */
+            video_url: string | null;
+        };
+        /** ExerciseUpsert */
+        ExerciseUpsert: {
+            category: components["schemas"]["ExerciseCategory"];
+            difficulty: components["schemas"]["ExerciseDifficulty"];
+            /** Equipment */
+            equipment?: string[];
+            /** Instructions Ar */
+            instructions_ar?: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en?: string | null;
+            primary_region: components["schemas"]["BodyRegion"];
+            /** Slug */
+            slug: string;
+            /** Target Muscles */
+            target_muscles?: string[];
+            /** Video Url */
+            video_url?: string | null;
+        };
+        /**
+         * FoodCategory
+         * @enum {string}
+         */
+        FoodCategory: "grains" | "protein" | "dairy" | "vegetables" | "fruits" | "legumes" | "fats" | "beverages" | "sweets" | "other";
+        /** FoodRow */
+        FoodRow: {
+            /** Allergens */
+            allergens: components["schemas"]["Allergen"][];
+            /** Calories Per 100G */
+            calories_per_100g: string;
+            /** Carbs G */
+            carbs_g: string;
+            category: components["schemas"]["FoodCategory"];
+            /** Fat G */
+            fat_g: string;
+            /** Fiber G */
+            fiber_g: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en: string | null;
+            /** Protein G */
+            protein_g: string;
+            /** Source */
+            source: string;
+        };
+        /** FoodUpsert */
+        FoodUpsert: {
+            /** Allergens */
+            allergens?: components["schemas"]["Allergen"][];
+            /** Calories Per 100G */
+            calories_per_100g: number | string;
+            /** Carbs G */
+            carbs_g: number | string;
+            category: components["schemas"]["FoodCategory"];
+            /** Fat G */
+            fat_g: number | string;
+            /**
+             * Fiber G
+             * @default 0
+             */
+            fiber_g: number | string;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en?: string | null;
+            /** Protein G */
+            protein_g: number | string;
+        };
+        /**
          * Gender
          * @description يُستخدم في معادلة Mifflin-St Jeor التي تفرّق بين الجنسين.
          * @enum {string}
@@ -1071,6 +1335,51 @@ export interface components {
             name_ar: string;
             /** Name En */
             name_en: string | null;
+            /** Slug */
+            slug: string;
+        };
+        /** InjuryTypeRow */
+        InjuryTypeRow: {
+            body_region: components["schemas"]["BodyRegion"];
+            /** Description Ar */
+            description_ar: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en: string | null;
+            /** Phases */
+            phases: {
+                [key: string]: unknown;
+            }[];
+            review: components["schemas"]["ReviewState"];
+            /** Slug */
+            slug: string;
+        };
+        /** InjuryTypeUpsert */
+        InjuryTypeUpsert: {
+            body_region: components["schemas"]["BodyRegion"];
+            /** Description Ar */
+            description_ar?: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /** Name Ar */
+            name_ar: string;
+            /** Name En */
+            name_en?: string | null;
+            /** Phases */
+            phases?: {
+                [key: string]: unknown;
+            }[];
             /** Slug */
             slug: string;
         };
@@ -1498,6 +1807,38 @@ export interface components {
             /** Password */
             password: string;
         };
+        /**
+         * ReviewRequest
+         * @description توثيق مراجعة مختص.
+         *
+         *     الاسم والمرجع إلزاميان: "مراجَع" بلا من ولا مرجع ليس مراجعة، وهو
+         *     بالضبط ما يمنعه ADR-003.
+         */
+        ReviewRequest: {
+            /** Reviewed By */
+            reviewed_by: string;
+            /** Source Reference */
+            source_reference: string;
+        };
+        /**
+         * ReviewState
+         * @description حالة المراجعة العلمية (ADR-003).
+         *
+         *     ``is_reviewed`` محسوب لا مُخزَّن: التخزين يسمح بأن يقول الصف "مراجَع"
+         *     بلا مراجع ولا تاريخ.
+         */
+        ReviewState: {
+            /** Content Version */
+            content_version: number;
+            /** Is Reviewed */
+            is_reviewed: boolean;
+            /** Reviewed At */
+            reviewed_at: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /** Source Reference */
+            source_reference: string | null;
+        };
         /** RoleCount */
         RoleCount: {
             /** Active */
@@ -1688,6 +2029,388 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_exercises_api_v1_admin_catalog_exercises_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                category?: components["schemas"]["ExerciseCategory"] | null;
+                region?: components["schemas"]["BodyRegion"] | null;
+                is_active?: boolean | null;
+                unreviewed?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseRow"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_exercise_api_v1_admin_catalog_exercises_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExerciseUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_exercise_api_v1_admin_catalog_exercises__exercise_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                exercise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExerciseUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_exercise_api_v1_admin_catalog_exercises__exercise_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                exercise_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_foods_api_v1_admin_catalog_foods_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                category?: components["schemas"]["FoodCategory"] | null;
+                is_active?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoodRow"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_food_api_v1_admin_catalog_foods_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FoodUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoodRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_food_api_v1_admin_catalog_foods__food_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                food_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FoodUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoodRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_injury_types_api_v1_admin_catalog_injury_types_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                region?: components["schemas"]["BodyRegion"] | null;
+                is_active?: boolean | null;
+                unreviewed?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InjuryTypeRow"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_injury_type_api_v1_admin_catalog_injury_types_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InjuryTypeUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InjuryTypeRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                injury_type_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InjuryTypeUpsert"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InjuryTypeRow"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__review_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                injury_type_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InjuryTypeRow"];
+                };
             };
             /** @description Validation Error */
             422: {

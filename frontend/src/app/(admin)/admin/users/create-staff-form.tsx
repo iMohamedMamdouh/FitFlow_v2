@@ -7,7 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { SelectField, TextField } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { createStaffAction } from "./actions";
-import { EMPTY_ADMIN_STATE } from "./state";
+import { EMPTY_ADMIN_STATE, textOf } from "./state";
 
 /**
  * إنشاء حساب أخصائي أو مدير.
@@ -22,13 +22,27 @@ export function CreateStaffForm() {
   const [state, submit] = useActionState(createStaffAction, EMPTY_ADMIN_STATE);
 
   return (
-    <form action={submit} className="flex flex-col gap-4">
+    // المفتاح يُعيد تركيب النموذج بالقيم المعادة: React يمسح النموذج بعد
+    // الفعل، فبريد مكرَّر كان يمحو الاسم والبريد وكلمة السر معًا.
+    <form key={state.attempt} action={submit} className="flex flex-col gap-4">
       {state.error !== null && <Alert tone="danger">{state.error}</Alert>}
       {state.message !== null && <Alert tone="success">{state.message}</Alert>}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <TextField label={auth("fullName")} name="full_name" required minLength={2} />
-        <TextField label={auth("email")} name="email" type="email" required />
+        <TextField
+          label={auth("fullName")}
+          name="full_name"
+          defaultValue={textOf(state.values, "full_name", "")}
+          required
+          minLength={2}
+        />
+        <TextField
+          label={auth("email")}
+          name="email"
+          type="email"
+          defaultValue={textOf(state.values, "email", "")}
+          required
+        />
         <TextField
           label={auth("password")}
           name="password"
@@ -37,7 +51,11 @@ export function CreateStaffForm() {
           required
           minLength={12}
         />
-        <SelectField label={t("roleFilter")} name="role" defaultValue="specialist">
+        <SelectField
+          label={t("roleFilter")}
+          name="role"
+          defaultValue={textOf(state.values, "role", "specialist")}
+        >
           <option value="specialist">{roles("specialist")}</option>
           <option value="admin">{roles("admin")}</option>
         </SelectField>

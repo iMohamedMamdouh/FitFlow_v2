@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 
 import { toApiError } from "@/lib/api/errors";
 import { apiFetch } from "@/lib/api/server";
-import type { AdminActionState } from "../users/state";
+import { capture, type AdminActionState } from "../users/state";
 
 /**
  * إسناد المرضى وإنهاؤه.
@@ -21,22 +21,36 @@ function refresh(): void {
   revalidatePath("/admin");
 }
 
-async function failure(error: unknown): Promise<AdminActionState> {
+async function failure(
+  error: unknown,
+  state: AdminActionState,
+  form: FormData,
+): Promise<AdminActionState> {
   const apiError = toApiError(error);
   const t = await getTranslations("errors");
-  return { error: apiError.detail ?? t(apiError.key), message: null };
+  return {
+    error: apiError.detail ?? t(apiError.key),
+    message: null,
+    values: capture(form),
+    attempt: state.attempt + 1,
+  };
 }
 
 export async function assignPatientAction(
   specialistId: string,
-  _state: AdminActionState,
+  state: AdminActionState,
   form: FormData,
 ): Promise<AdminActionState> {
   const t = await getTranslations("admin.assignments");
   const patientId = String(form.get("patient_id") ?? "");
   if (patientId === "") {
     const errors = await getTranslations("errors");
-    return { error: errors("validation"), message: null };
+    return {
+      error: errors("validation"),
+      message: null,
+      values: capture(form),
+      attempt: state.attempt + 1,
+    };
   }
 
   try {
@@ -45,24 +59,24 @@ export async function assignPatientAction(
       body: { specialist_id: specialistId, patient_id: patientId },
     });
     refresh();
-    return { error: null, message: t("assigned") };
+    return { error: null, message: t("assigned"), values: null, attempt: state.attempt + 1 };
   } catch (error) {
-    return failure(error);
+    return failure(error, state, form);
   }
 }
 
 export async function unassignPatientAction(
   specialistId: string,
   patientId: string,
-  _state: AdminActionState,
-  _form: FormData,
+  state: AdminActionState,
+  form: FormData,
 ): Promise<AdminActionState> {
   const t = await getTranslations("admin.assignments");
   try {
     await apiFetch(`/admin/assignments/${specialistId}/${patientId}`, { method: "DELETE" });
     refresh();
-    return { error: null, message: t("unassignDone") };
+    return { error: null, message: t("unassignDone"), values: null, attempt: state.attempt + 1 };
   } catch (error) {
-    return failure(error);
+    return failure(error, state, form);
   }
 }

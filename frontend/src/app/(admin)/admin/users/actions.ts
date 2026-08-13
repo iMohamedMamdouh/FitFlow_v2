@@ -7,7 +7,7 @@ import { toApiError } from "@/lib/api/errors";
 import type { AdminUserRow, UserRole } from "@/lib/api/schema";
 import { USER_ROLES } from "@/lib/api/schema";
 import { apiFetch } from "@/lib/api/server";
-import type { AdminActionState } from "./state";
+import { capture, type AdminActionState } from "./state";
 
 /**
  * أفعال المدير على الحسابات.
@@ -22,10 +22,19 @@ function refresh(): void {
   revalidatePath("/admin");
 }
 
-async function failure(error: unknown): Promise<AdminActionState> {
+async function failure(
+  error: unknown,
+  state: AdminActionState,
+  form: FormData,
+): Promise<AdminActionState> {
   const apiError = toApiError(error);
   const t = await getTranslations("errors");
-  return { error: apiError.detail ?? t(apiError.key), message: null };
+  return {
+    error: apiError.detail ?? t(apiError.key),
+    message: null,
+    values: capture(form),
+    attempt: state.attempt + 1,
+  };
 }
 
 function roleOf(form: FormData): UserRole | null {
@@ -38,8 +47,8 @@ function roleOf(form: FormData): UserRole | null {
 export async function setUserActiveAction(
   userId: string,
   isActive: boolean,
-  _state: AdminActionState,
-  _form: FormData,
+  state: AdminActionState,
+  form: FormData,
 ): Promise<AdminActionState> {
   const t = await getTranslations("admin.users");
   try {
@@ -48,22 +57,27 @@ export async function setUserActiveAction(
       body: { is_active: isActive },
     });
     refresh();
-    return { error: null, message: t("saved") };
+    return { error: null, message: t("saved"), values: null, attempt: state.attempt + 1 };
   } catch (error) {
-    return failure(error);
+    return failure(error, state, form);
   }
 }
 
 export async function setUserRoleAction(
   userId: string,
-  _state: AdminActionState,
+  state: AdminActionState,
   form: FormData,
 ): Promise<AdminActionState> {
   const t = await getTranslations("admin.users");
   const role = roleOf(form);
   if (role === null) {
     const errors = await getTranslations("errors");
-    return { error: errors("validation"), message: null };
+    return {
+      error: errors("validation"),
+      message: null,
+      values: capture(form),
+      attempt: state.attempt + 1,
+    };
   }
 
   try {
@@ -72,21 +86,26 @@ export async function setUserRoleAction(
       body: { role },
     });
     refresh();
-    return { error: null, message: t("saved") };
+    return { error: null, message: t("saved"), values: null, attempt: state.attempt + 1 };
   } catch (error) {
-    return failure(error);
+    return failure(error, state, form);
   }
 }
 
 export async function createStaffAction(
-  _state: AdminActionState,
+  state: AdminActionState,
   form: FormData,
 ): Promise<AdminActionState> {
   const t = await getTranslations("admin.users");
   const role = roleOf(form);
   if (role === null || role === "patient") {
     const errors = await getTranslations("errors");
-    return { error: errors("validation"), message: null };
+    return {
+      error: errors("validation"),
+      message: null,
+      values: capture(form),
+      attempt: state.attempt + 1,
+    };
   }
 
   try {
@@ -100,8 +119,8 @@ export async function createStaffAction(
       },
     });
     refresh();
-    return { error: null, message: t("created") };
+    return { error: null, message: t("created"), values: null, attempt: state.attempt + 1 };
   } catch (error) {
-    return failure(error);
+    return failure(error, state, form);
   }
 }

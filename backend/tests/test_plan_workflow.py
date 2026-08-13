@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date
 from decimal import Decimal
 
 import pytest
@@ -15,6 +14,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.clock import today
 from app.core.enums import Allergen, FoodCategory, PlanStatus
 from app.models.care_team import SpecialistPatient
 from app.models.catalog import Food, FoodAllergenLink
@@ -22,7 +22,7 @@ from app.models.plan import Plan
 from app.models.user import User
 from tests.conftest import login
 
-TODAY = date.today()
+TODAY = today()
 
 PROFILE_PAYLOAD = {
     "birth_date": "1994-03-15",
@@ -242,9 +242,9 @@ async def test_patient_sees_the_plan_only_after_activation(
     assert (await client.get("/api/v1/me/plans", headers=headers)).json() == []
 
     await client.post(f"/api/v1/plans/{plan_id}/approve", json={}, headers=reviewer)
-    assert (
-        await client.get("/api/v1/me/plans", headers=headers)
-    ).json() == [], "الاعتماد وحده لا يكفي — التفعيل هو ما يجعلها مرئية"
+    assert (await client.get("/api/v1/me/plans", headers=headers)).json() == [], (
+        "الاعتماد وحده لا يكفي — التفعيل هو ما يجعلها مرئية"
+    )
 
     await client.post(f"/api/v1/plans/{plan_id}/activate", headers=reviewer)
     visible = (await client.get("/api/v1/me/plans", headers=headers)).json()

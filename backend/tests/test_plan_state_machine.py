@@ -264,9 +264,7 @@ async def test_active_plans_of_different_types_coexist(
     )
 
     count = await session.scalar(
-        text(
-            "SELECT count(*) FROM plans" " WHERE user_id = CAST(:uid AS uuid) AND status = 'active'"
-        ),
+        text("SELECT count(*) FROM plans WHERE user_id = CAST(:uid AS uuid) AND status = 'active'"),
         {"uid": patient_user.id},
     )
     assert count == 2
@@ -279,8 +277,7 @@ async def test_many_archived_plans_are_allowed(session: AsyncSession, patient_us
 
     count = await session.scalar(
         text(
-            "SELECT count(*) FROM plans"
-            " WHERE user_id = CAST(:uid AS uuid) AND status = 'archived'"
+            "SELECT count(*) FROM plans WHERE user_id = CAST(:uid AS uuid) AND status = 'archived'"
         ),
         {"uid": patient_user.id},
     )

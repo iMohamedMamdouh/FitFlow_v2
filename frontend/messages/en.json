@@ -343,6 +343,31 @@
       "report": "Medical report",
       "photo": "Photo",
       "other": "Other"
+    },
+    "foodCategory": {
+      "grains": "Grains",
+      "protein": "Protein",
+      "dairy": "Dairy",
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "legumes": "Legumes",
+      "fats": "Fats",
+      "beverages": "Beverages",
+      "sweets": "Sweets",
+      "other": "Other"
+    },
+    "exerciseCategory": {
+      "strength": "Strength",
+      "mobility": "Mobility",
+      "stability": "Stability",
+      "balance": "Balance",
+      "cardio": "Cardio",
+      "stretching": "Stretching"
+    },
+    "exerciseDifficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
     }
   },
   "roles": {
@@ -576,7 +601,8 @@
   "adminNav": {
     "overview": "Overview",
     "users": "Users",
-    "assignments": "Assignments"
+    "assignments": "Assignments",
+    "catalog": "Catalogue"
   },
   "admin": {
     "overview": {
@@ -651,6 +677,72 @@
       "emptyForSpecialist": "No patients assigned to this specialist.",
       "unassignedPatients": "Patients without a specialist",
       "allAssigned": "Every patient has a specialist."
+    },
+    "catalog": {
+      "title": "Scientific catalogue",
+      "subtitle": "What the engine builds plans from. Editing here changes what reaches patients.",
+      "foods": "Foods",
+      "exercises": "Exercises",
+      "injuries": "Injury types",
+      "search": "Search",
+      "searchPlaceholder": "Arabic or English name",
+      "filterCategory": "Category",
+      "filterRegion": "Region",
+      "filterStatus": "Status",
+      "all": "All",
+      "onlyActive": "Active",
+      "onlyDisabled": "Disabled",
+      "onlyUnreviewed": "Unreviewed",
+      "apply": "Filter",
+      "reset": "Clear filters",
+      "empty": "Nothing matches these filters.",
+      "count": "{count} items",
+      "edit": "Edit",
+      "addNew": "Add a new item",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Change saved.",
+      "created": "Item added.",
+      "disabled": "Disabled",
+      "active": "Active",
+      "isActive": "Active (visible to patients and to the engine)",
+      "noDelete": "Nothing is deleted here: generated plans point at this content, and disabling hides it without breaking them.",
+      "nameAr": "Arabic name",
+      "nameEn": "English name",
+      "slug": "Slug",
+      "slugHint": "Lowercase latin letters, digits and dashes only — it appears in URLs.",
+      "calories": "Calories / 100g",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "fiber": "Fibre (g)",
+      "allergens": "Allergens",
+      "category": "Category",
+      "difficulty": "Level",
+      "region": "Primary region",
+      "targetMuscles": "Target muscles",
+      "equipment": "Equipment",
+      "listHint": "Separate with commas.",
+      "instructions": "How to perform",
+      "videoUrl": "Video link",
+      "description": "Description",
+      "phases": "Rehab phases (JSON)",
+      "phasesHint": "An array of phases: number, name, goals, criteria to advance, and typical duration.",
+      "phasesInvalid": "Phases are not valid JSON — it must be an array of objects.",
+      "version": "Version {version}",
+      "versionHint": "Moves only when the science changes — a plan is stamped with the version it was built on.",
+      "reviewed": "Reviewed",
+      "unreviewed": "Not reviewed",
+      "reviewTitle": "Record the clinical review",
+      "reviewHint": "ADR-003: content feeding generation needs a specialist who signs it off and a source that can be checked.",
+      "reviewedBy": "Reviewer",
+      "reviewedByPlaceholder": "Name and title",
+      "sourceReference": "Source",
+      "sourceReferencePlaceholder": "Journal, guideline, or link",
+      "reviewedAt": "Reviewed on {date}",
+      "recordReview": "Record review",
+      "recording": "Recording…",
+      "reviewSaved": "Review recorded."
     }
   }
 }

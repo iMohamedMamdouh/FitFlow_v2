@@ -86,7 +86,7 @@ class Injury(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     __table_args__ = (
         CheckConstraint("pain_level BETWEEN 0 AND 10", name="pain_level_within_scale"),
         CheckConstraint("current_phase BETWEEN 1 AND 10", name="current_phase_within_range"),
-        CheckConstraint("injury_date <= CURRENT_DATE", name="injury_date_not_in_future"),
+        CheckConstraint("injury_date <= CURRENT_DATE + 1", name="injury_date_not_in_future"),
         # تاريخ جراحة بدون جراحة تناقض، وجراحة قبل الإصابة مستحيلة.
         CheckConstraint(
             "(had_surgery AND surgery_date IS NOT NULL AND surgery_date >= injury_date)"
@@ -180,7 +180,7 @@ class PhysiologicalReading(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         CheckConstraint(
             "resting_hr IS NULL OR resting_hr BETWEEN 25 AND 250", name="resting_hr_within_range"
         ),
-        CheckConstraint("reading_date <= CURRENT_DATE", name="reading_date_not_in_future"),
+        CheckConstraint("reading_date <= CURRENT_DATE + 1", name="reading_date_not_in_future"),
         # قياس واحد لكل يوم من كل مصدر — يمنع تكرار الإدخال اليدوي بالخطأ
         # دون منع جهاز من إرسال قياسه في نفس اليوم.
         UniqueConstraint("user_id", "reading_date", "source", name="one_reading_per_day_source"),
@@ -221,7 +221,7 @@ class DailyLog(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         CheckConstraint(
             "weight_kg IS NULL OR weight_kg BETWEEN 20 AND 500", name="weight_within_range"
         ),
-        CheckConstraint("log_date <= CURRENT_DATE", name="log_date_not_in_future"),
+        CheckConstraint("log_date <= CURRENT_DATE + 1", name="log_date_not_in_future"),
         UniqueConstraint("user_id", "log_date", name="one_log_per_day"),
         Index("ix_daily_logs_user_date", "user_id", "log_date"),
     )

@@ -14,6 +14,7 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.clock import today
 from app.core.enums import InjuryStatus, PlanStatus
 from app.models.clinical import DailyLog, Injury, PhysiologicalReading
 from app.models.plan import Plan
@@ -96,7 +97,7 @@ async def _log_signals(
         .where(DailyLog.user_id.in_(patient_ids))
         .group_by(DailyLog.user_id)
     )
-    since = date.today() - timedelta(days=ADHERENCE_WINDOW_DAYS)
+    since = today() - timedelta(days=ADHERENCE_WINDOW_DAYS)
     adherence_rows = await session.execute(
         select(DailyLog.user_id, func.avg(DailyLog.diet_adherence_pct))
         .where(
@@ -165,11 +166,11 @@ async def build_patient_summaries(
     last_log, adherence = await _log_signals(session, patient_ids)
     complete, consented = await _profiles(session, patient_ids)
 
-    today = date.today()
+    now = today()
     summaries: list[PatientSummary] = []
     for patient in patients:
         last = last_log.get(patient.id)
-        days_since = (today - last).days if last is not None else None
+        days_since = (now - last).days if last is not None else None
         latest = latest_weight.get(patient.id)
         first = first_weight.get(patient.id)
 

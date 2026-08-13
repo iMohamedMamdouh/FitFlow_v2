@@ -17,6 +17,12 @@ type Schemas = components["schemas"];
 
 export type ActivityLevel = Schemas["ActivityLevel"];
 export type AdminUserRow = Schemas["AdminUserRow"];
+export type ExerciseCategory = Schemas["ExerciseCategory"];
+export type ExerciseDifficulty = Schemas["ExerciseDifficulty"];
+export type ExerciseRow = Schemas["ExerciseRow"];
+export type FoodCategory = Schemas["FoodCategory"];
+export type FoodRow = Schemas["FoodRow"];
+export type InjuryTypeRow = Schemas["InjuryTypeRow"];
 export type AuditEntryRead = Schemas["AuditEntryRead"];
 export type Allergen = Schemas["Allergen"];
 export type AttachmentRead = Schemas["AttachmentRead"];
@@ -109,6 +115,48 @@ export const PATIENT_FLAGS = [
   "not_started",
   "on_track",
 ] as const satisfies readonly PatientFlag[];
+
+export const FOOD_CATEGORIES = [
+  "grains",
+  "protein",
+  "dairy",
+  "vegetables",
+  "fruits",
+  "legumes",
+  "fats",
+  "beverages",
+  "sweets",
+  "other",
+] as const satisfies readonly FoodCategory[];
+
+export const EXERCISE_CATEGORIES = [
+  "strength",
+  "mobility",
+  "stability",
+  "balance",
+  "cardio",
+  "stretching",
+] as const satisfies readonly ExerciseCategory[];
+
+export const EXERCISE_DIFFICULTIES = [
+  "beginner",
+  "intermediate",
+  "advanced",
+] as const satisfies readonly ExerciseDifficulty[];
+
+export const BODY_REGIONS = [
+  "shoulder",
+  "elbow",
+  "wrist",
+  "neck",
+  "upper_back",
+  "lower_back",
+  "hip",
+  "knee",
+  "ankle",
+  "foot",
+  "other",
+] as const satisfies readonly BodyRegion[];
 
 export const MEAL_ORDER = [
   "breakfast",

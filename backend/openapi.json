@@ -522,6 +522,430 @@
         "title": "DependencyStatus",
         "type": "object"
       },
+      "ExerciseCategory": {
+        "enum": [
+          "strength",
+          "mobility",
+          "stability",
+          "balance",
+          "cardio",
+          "stretching"
+        ],
+        "title": "ExerciseCategory",
+        "type": "string"
+      },
+      "ExerciseDifficulty": {
+        "enum": [
+          "beginner",
+          "intermediate",
+          "advanced"
+        ],
+        "title": "ExerciseDifficulty",
+        "type": "string"
+      },
+      "ExerciseRow": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/ExerciseCategory"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/ExerciseDifficulty"
+          },
+          "equipment": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Equipment",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "instructions_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions Ar"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "primary_region": {
+            "$ref": "#/components/schemas/BodyRegion"
+          },
+          "review": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "target_muscles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Muscles",
+            "type": "array"
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_en",
+          "slug",
+          "category",
+          "difficulty",
+          "primary_region",
+          "target_muscles",
+          "equipment",
+          "instructions_ar",
+          "video_url",
+          "is_active",
+          "review"
+        ],
+        "title": "ExerciseRow",
+        "type": "object"
+      },
+      "ExerciseUpsert": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/ExerciseCategory"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/ExerciseDifficulty"
+          },
+          "equipment": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Equipment",
+            "type": "array"
+          },
+          "instructions_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instructions Ar"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "primary_region": {
+            "$ref": "#/components/schemas/BodyRegion"
+          },
+          "slug": {
+            "maxLength": 120,
+            "minLength": 2,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Slug",
+            "type": "string"
+          },
+          "target_muscles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Target Muscles",
+            "type": "array"
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url"
+          }
+        },
+        "required": [
+          "name_ar",
+          "slug",
+          "category",
+          "difficulty",
+          "primary_region"
+        ],
+        "title": "ExerciseUpsert",
+        "type": "object"
+      },
+      "FoodCategory": {
+        "enum": [
+          "grains",
+          "protein",
+          "dairy",
+          "vegetables",
+          "fruits",
+          "legumes",
+          "fats",
+          "beverages",
+          "sweets",
+          "other"
+        ],
+        "title": "FoodCategory",
+        "type": "string"
+      },
+      "FoodRow": {
+        "properties": {
+          "allergens": {
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            },
+            "title": "Allergens",
+            "type": "array"
+          },
+          "calories_per_100g": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Calories Per 100G",
+            "type": "string"
+          },
+          "carbs_g": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Carbs G",
+            "type": "string"
+          },
+          "category": {
+            "$ref": "#/components/schemas/FoodCategory"
+          },
+          "fat_g": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fat G",
+            "type": "string"
+          },
+          "fiber_g": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Fiber G",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "protein_g": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Protein G",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_en",
+          "category",
+          "calories_per_100g",
+          "protein_g",
+          "carbs_g",
+          "fat_g",
+          "fiber_g",
+          "allergens",
+          "source",
+          "is_active"
+        ],
+        "title": "FoodRow",
+        "type": "object"
+      },
+      "FoodUpsert": {
+        "properties": {
+          "allergens": {
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            },
+            "title": "Allergens",
+            "type": "array"
+          },
+          "calories_per_100g": {
+            "anyOf": [
+              {
+                "maximum": 950.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Calories Per 100G"
+          },
+          "carbs_g": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Carbs G"
+          },
+          "category": {
+            "$ref": "#/components/schemas/FoodCategory"
+          },
+          "fat_g": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Fat G"
+          },
+          "fiber_g": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "default": "0",
+            "title": "Fiber G"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "protein_g": {
+            "anyOf": [
+              {
+                "maximum": 100.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Protein G"
+          }
+        },
+        "required": [
+          "name_ar",
+          "category",
+          "calories_per_100g",
+          "protein_g",
+          "carbs_g",
+          "fat_g"
+        ],
+        "title": "FoodUpsert",
+        "type": "object"
+      },
       "Gender": {
         "description": "يُستخدم في معادلة Mifflin-St Jeor التي تفرّق بين الجنسين.",
         "enum": [
@@ -770,6 +1194,139 @@
           "is_clinically_reviewed"
         ],
         "title": "InjuryTypeRead",
+        "type": "object"
+      },
+      "InjuryTypeRow": {
+        "properties": {
+          "body_region": {
+            "$ref": "#/components/schemas/BodyRegion"
+          },
+          "description_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Ar"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "phases": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "review": {
+            "$ref": "#/components/schemas/ReviewState"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name_ar",
+          "name_en",
+          "slug",
+          "body_region",
+          "description_ar",
+          "phases",
+          "is_active",
+          "review"
+        ],
+        "title": "InjuryTypeRow",
+        "type": "object"
+      },
+      "InjuryTypeUpsert": {
+        "properties": {
+          "body_region": {
+            "$ref": "#/components/schemas/BodyRegion"
+          },
+          "description_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Ar"
+          },
+          "is_active": {
+            "default": true,
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "name_ar": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name Ar",
+            "type": "string"
+          },
+          "name_en": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name En"
+          },
+          "phases": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "slug": {
+            "maxLength": 120,
+            "minLength": 2,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name_ar",
+          "slug",
+          "body_region"
+        ],
+        "title": "InjuryTypeUpsert",
         "type": "object"
       },
       "LivenessResponse": {
@@ -1840,6 +2397,84 @@
         "title": "RegisterRequest",
         "type": "object"
       },
+      "ReviewRequest": {
+        "description": "توثيق مراجعة مختص.\n\nالاسم والمرجع إلزاميان: \"مراجَع\" بلا من ولا مرجع ليس مراجعة، وهو\nبالضبط ما يمنعه ADR-003.",
+        "properties": {
+          "reviewed_by": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Reviewed By",
+            "type": "string"
+          },
+          "source_reference": {
+            "minLength": 3,
+            "title": "Source Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reviewed_by",
+          "source_reference"
+        ],
+        "title": "ReviewRequest",
+        "type": "object"
+      },
+      "ReviewState": {
+        "description": "حالة المراجعة العلمية (ADR-003).\n\n``is_reviewed`` محسوب لا مُخزَّن: التخزين يسمح بأن يقول الصف \"مراجَع\"\nبلا مراجع ولا تاريخ.",
+        "properties": {
+          "content_version": {
+            "title": "Content Version",
+            "type": "integer"
+          },
+          "is_reviewed": {
+            "title": "Is Reviewed",
+            "type": "boolean"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed At"
+          },
+          "reviewed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reviewed By"
+          },
+          "source_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Reference"
+          }
+        },
+        "required": [
+          "reviewed_by",
+          "reviewed_at",
+          "source_reference",
+          "content_version",
+          "is_reviewed"
+        ],
+        "title": "ReviewState",
+        "type": "object"
+      },
       "RoleCount": {
         "properties": {
           "active": {
@@ -2217,6 +2852,809 @@
         "summary": "Unassign Patient",
         "tags": [
           "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/exercises": {
+      "get": {
+        "operationId": "list_exercises_api_v1_admin_catalog_exercises_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ExerciseCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "region",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BodyRegion"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unreviewed",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unreviewed"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExerciseRow"
+                  },
+                  "title": "Response List Exercises Api V1 Admin Catalog Exercises Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Exercises",
+        "tags": [
+          "admin-catalog"
+        ]
+      },
+      "post": {
+        "operationId": "create_exercise_api_v1_admin_catalog_exercises_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Exercise",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/exercises/{exercise_id}": {
+      "patch": {
+        "operationId": "update_exercise_api_v1_admin_catalog_exercises__exercise_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Exercise",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/exercises/{exercise_id}/review": {
+      "post": {
+        "operationId": "review_exercise_api_v1_admin_catalog_exercises__exercise_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "exercise_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Exercise Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExerciseRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Exercise",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/foods": {
+      "get": {
+        "operationId": "list_foods_api_v1_admin_catalog_foods_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/FoodCategory"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FoodRow"
+                  },
+                  "title": "Response List Foods Api V1 Admin Catalog Foods Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Foods",
+        "tags": [
+          "admin-catalog"
+        ]
+      },
+      "post": {
+        "operationId": "create_food_api_v1_admin_catalog_foods_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoodRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Food",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/foods/{food_id}": {
+      "patch": {
+        "operationId": "update_food_api_v1_admin_catalog_foods__food_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "food_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Food Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoodRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Food",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/injury-types": {
+      "get": {
+        "operationId": "list_injury_types_api_v1_admin_catalog_injury_types_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "in": "query",
+            "name": "region",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BodyRegion"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region"
+            }
+          },
+          {
+            "in": "query",
+            "name": "is_active",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          },
+          {
+            "in": "query",
+            "name": "unreviewed",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Unreviewed"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InjuryTypeRow"
+                  },
+                  "title": "Response List Injury Types Api V1 Admin Catalog Injury Types Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Injury Types",
+        "tags": [
+          "admin-catalog"
+        ]
+      },
+      "post": {
+        "operationId": "create_injury_type_api_v1_admin_catalog_injury_types_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InjuryTypeUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InjuryTypeRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Injury Type",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/injury-types/{injury_type_id}": {
+      "patch": {
+        "operationId": "update_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "injury_type_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Injury Type Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InjuryTypeUpsert"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InjuryTypeRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Injury Type",
+        "tags": [
+          "admin-catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/injury-types/{injury_type_id}/review": {
+      "post": {
+        "operationId": "review_injury_type_api_v1_admin_catalog_injury_types__injury_type_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "injury_type_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Injury Type Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InjuryTypeRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Review Injury Type",
+        "tags": [
+          "admin-catalog"
         ]
       }
     },

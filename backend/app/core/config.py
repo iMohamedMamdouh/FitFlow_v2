@@ -39,6 +39,11 @@ class Settings(BaseSettings):
     project_name: str = "FitFlow"
     api_v1_prefix: str = "/api/v1"
 
+    # توقيت المنصة. "اليوم" مفهوم محلي: الواجهة تحسبه بهذا التوقيت،
+    # وعلى الخادم أن يحكم بالمرجع نفسه وإلا رُفض تسجيل الليل كأنه في
+    # المستقبل. القيمة تُضبط للسوق المستهدَف لا لموقع الخادم.
+    timezone: str = "Africa/Cairo"
+
     # ---- PostgreSQL ----
     postgres_user: str
     postgres_password: SecretStr

@@ -15,6 +15,7 @@ import pytest
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.clock import today
 from app.models.care_team import SpecialistPatient
 from app.models.catalog import Exercise, ExerciseContraindication, Food, InjuryType
 from app.models.clinical import DailyLog, Injury, PhysiologicalReading
@@ -33,7 +34,7 @@ from app.models.plan import NutritionPlan, Plan, PlanExercise
 from app.models.profile import UserProfile
 from app.models.user import User
 
-TODAY = date.today()
+TODAY = today()
 
 
 # ------------------------------------------------------------- مصانع مساعدة
@@ -283,12 +284,21 @@ async def test_impossible_weight_is_rejected(session: AsyncSession, patient_user
     )
 
 
-async def test_future_reading_date_is_rejected(session: AsyncSession, patient_user: User) -> None:
+async def test_absurd_future_reading_date_is_rejected(
+    session: AsyncSession, patient_user: User
+) -> None:
+    """القيد هنا سياج ضد القيم العبثية لا القاعدة الدقيقة.
+
+    يوم واحد للأمام مسموح على مستوى قاعدة البيانات عمدًا: ``CURRENT_DATE``
+    تاريخ خادم القاعدة (UTC)، والمنصة تعمل بتوقيت آخر، فالمنع الحرفي كان
+    يرفض تسجيل المساء عند المستخدم. القاعدة الدقيقة — "لا تاريخ في مستقبل
+    **المنصة**" — في طبقة التطبيق حيث يُعرف التوقيت (``tests/test_clock.py``).
+    """
     await _expect_rejected(
         session,
         PhysiologicalReading(
             user_id=patient_user.id,
-            reading_date=TODAY + timedelta(days=1),
+            reading_date=TODAY + timedelta(days=2),
             weight_kg=Decimal("80"),
         ),
     )
